@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleEnum {
+  Admin
+  Provider
+  Customer
+}
+
+enum TimeSlotEnum {
+  Available
+  Booked
+  Cancelled
+}
+
+model User {
+  id                   Int           @id @default(autoincrement())
+  name                 String
+  email                String
+  phone                String
+  password             String
+  role                 RoleEnum      @default(Customer)
+  is_verified          Boolean
+  created_at           DateTime
+  service              Service[]
+  schedule             Schedule[]
+  CustomerAppointments Appointment[] @relation("CustomerAppointments")
+  ProviderAppointments Appointment[] @relation("ProviderAppointments")
+}
+
+enum DaysOfweeksEnum {
+  Montag
+  Dienstag
+  Mittwoch
+  Donnerstag
+  Freitag
+  Samstag
+  Sonntag
+}
+
+enum StatusEnum {
+  Pending
+  Confirmed
+  Completed
+  Cancelled
+}
+
+model Service {
+  id          Int           @id @default(autoincrement())
+  user        User[]
+  provider_id Int // ForeignKey to User (Provider)
+  title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
+  duration    Int // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
+  price       Float // قیمت (اختیاری)
+  description String
+  is_active   Boolean
+  Appointment Appointment[]
+}
+
+model Schedule {
+  id           Int             @id @default(autoincrement())
+  user         User[]
+  timeSlot     TimeSlot[]
+  provider_id  Int // # ForeignKey to User
+  day_of_week  DaysOfweeksEnum
+  start_time   String //# ساعت شروع کار (مثلا 08:00)
+  end_time     String //  # ساعت پایان کار (مثلا 17:00)
+  is_available Boolean //  # غیرفعال کردن روز خاص
+}
+
+model TimeSlot {
+  id          Int           @id @default(autoincrement())
+  schedule    Schedule      @relation(fields: [schedule_id], references: [id])
+  schedule_id Int //# ForeignKey to Schedule
+  start_time  DateTime // # مثال: 2025-06-10 14:00
+  end_time    DateTime // # مثال: 2025-06-10 14:30
+  status      TimeSlotEnum
+  Appointment Appointment[]
+}
+
+model Appointment {
+  id           Int        @id @default(autoincrement())
+  customer     User       @relation("CustomerAppointments", fields: [customer_id], references: [id])
+  customer_id  Int // # ForeignKey to User (Customer)
+  provider     User       @relation("ProviderAppointments", fields: [provider_id], references: [id])
+  provider_id  Int //# ForeignKey to User (Provider)
+  service      Service    @relation(fields: [service_id], references: [id])
+  service_id   Int // # ForeignKey to Service
+  timeSlot     TimeSlot   @relation(fields: [time_slot_id], references: [id])
+  time_slot_id Int // # ForeignKey to TimeSlot
+  status       StatusEnum
+  notes        String // # توضیحات مشتری
+  created_at   DateTime
+}
