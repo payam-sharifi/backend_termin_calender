@@ -125,10 +125,12 @@ exports.Prisma.UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   phone: 'phone',
+  sex: 'sex',
   password: 'password',
   role: 'role',
   is_verified: 'is_verified',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.ServiceScalarFieldEnum = {
@@ -178,6 +180,11 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.Sex = exports.$Enums.Sex = {
+  Man: 'Man',
+  woman: 'woman'
+};
+
 exports.RoleEnum = exports.$Enums.RoleEnum = {
   Admin: 'Admin',
   Provider: 'Provider',

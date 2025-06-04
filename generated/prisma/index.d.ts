@@ -61,6 +61,14 @@ export const TimeSlotEnum: {
 export type TimeSlotEnum = (typeof TimeSlotEnum)[keyof typeof TimeSlotEnum]
 
 
+export const Sex: {
+  Man: 'Man',
+  woman: 'woman'
+};
+
+export type Sex = (typeof Sex)[keyof typeof Sex]
+
+
 export const DaysOfweeksEnum: {
   Montag: 'Montag',
   Dienstag: 'Dienstag',
@@ -92,6 +100,10 @@ export const RoleEnum: typeof $Enums.RoleEnum
 export type TimeSlotEnum = $Enums.TimeSlotEnum
 
 export const TimeSlotEnum: typeof $Enums.TimeSlotEnum
+
+export type Sex = $Enums.Sex
+
+export const Sex: typeof $Enums.Sex
 
 export type DaysOfweeksEnum = $Enums.DaysOfweeksEnum
 
@@ -1488,10 +1500,12 @@ export namespace Prisma {
     name: string | null
     email: string | null
     phone: string | null
+    sex: $Enums.Sex | null
     password: string | null
     role: $Enums.RoleEnum | null
     is_verified: boolean | null
     created_at: Date | null
+    updated_at: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1499,10 +1513,12 @@ export namespace Prisma {
     name: string | null
     email: string | null
     phone: string | null
+    sex: $Enums.Sex | null
     password: string | null
     role: $Enums.RoleEnum | null
     is_verified: boolean | null
     created_at: Date | null
+    updated_at: Date | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1510,10 +1526,12 @@ export namespace Prisma {
     name: number
     email: number
     phone: number
+    sex: number
     password: number
     role: number
     is_verified: number
     created_at: number
+    updated_at: number
     _all: number
   }
 
@@ -1531,10 +1549,12 @@ export namespace Prisma {
     name?: true
     email?: true
     phone?: true
+    sex?: true
     password?: true
     role?: true
     is_verified?: true
     created_at?: true
+    updated_at?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1542,10 +1562,12 @@ export namespace Prisma {
     name?: true
     email?: true
     phone?: true
+    sex?: true
     password?: true
     role?: true
     is_verified?: true
     created_at?: true
+    updated_at?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1553,10 +1575,12 @@ export namespace Prisma {
     name?: true
     email?: true
     phone?: true
+    sex?: true
     password?: true
     role?: true
     is_verified?: true
     created_at?: true
+    updated_at?: true
     _all?: true
   }
 
@@ -1651,10 +1675,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role: $Enums.RoleEnum
     is_verified: boolean
     created_at: Date
+    updated_at: Date
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1681,10 +1707,12 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phone?: boolean
+    sex?: boolean
     password?: boolean
     role?: boolean
     is_verified?: boolean
     created_at?: boolean
+    updated_at?: boolean
     service?: boolean | User$serviceArgs<ExtArgs>
     schedule?: boolean | User$scheduleArgs<ExtArgs>
     CustomerAppointments?: boolean | User$CustomerAppointmentsArgs<ExtArgs>
@@ -1697,10 +1725,12 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phone?: boolean
+    sex?: boolean
     password?: boolean
     role?: boolean
     is_verified?: boolean
     created_at?: boolean
+    updated_at?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1708,10 +1738,12 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phone?: boolean
+    sex?: boolean
     password?: boolean
     role?: boolean
     is_verified?: boolean
     created_at?: boolean
+    updated_at?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1719,13 +1751,15 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phone?: boolean
+    sex?: boolean
     password?: boolean
     role?: boolean
     is_verified?: boolean
     created_at?: boolean
+    updated_at?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "password" | "role" | "is_verified" | "created_at", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "sex" | "password" | "role" | "is_verified" | "created_at" | "updated_at", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     service?: boolean | User$serviceArgs<ExtArgs>
     schedule?: boolean | User$scheduleArgs<ExtArgs>
@@ -1749,10 +1783,12 @@ export namespace Prisma {
       name: string
       email: string
       phone: string
+      sex: $Enums.Sex
       password: string
       role: $Enums.RoleEnum
       is_verified: boolean
       created_at: Date
+      updated_at: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2184,10 +2220,12 @@ export namespace Prisma {
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
+    readonly sex: FieldRef<"User", 'Sex'>
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'RoleEnum'>
     readonly is_verified: FieldRef<"User", 'Boolean'>
     readonly created_at: FieldRef<"User", 'DateTime'>
+    readonly updated_at: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -7325,10 +7363,12 @@ export namespace Prisma {
     name: 'name',
     email: 'email',
     phone: 'phone',
+    sex: 'sex',
     password: 'password',
     role: 'role',
     is_verified: 'is_verified',
-    created_at: 'created_at'
+    created_at: 'created_at',
+    updated_at: 'updated_at'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -7434,6 +7474,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Sex'
+   */
+  export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex'>
+    
+
+
+  /**
+   * Reference to a field of type 'Sex[]'
+   */
+  export type ListEnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex[]'>
+    
+
+
+  /**
    * Reference to a field of type 'RoleEnum'
    */
   export type EnumRoleEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RoleEnum'>
@@ -7535,10 +7589,12 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
+    sex?: EnumSexFilter<"User"> | $Enums.Sex
     password?: StringFilter<"User"> | string
     role?: EnumRoleEnumFilter<"User"> | $Enums.RoleEnum
     is_verified?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
+    updated_at?: DateTimeFilter<"User"> | Date | string
     service?: ServiceListRelationFilter
     schedule?: ScheduleListRelationFilter
     CustomerAppointments?: AppointmentListRelationFilter
@@ -7550,10 +7606,12 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    sex?: SortOrder
     password?: SortOrder
     role?: SortOrder
     is_verified?: SortOrder
     created_at?: SortOrder
+    updated_at?: SortOrder
     service?: ServiceOrderByRelationAggregateInput
     schedule?: ScheduleOrderByRelationAggregateInput
     CustomerAppointments?: AppointmentOrderByRelationAggregateInput
@@ -7568,10 +7626,12 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
+    sex?: EnumSexFilter<"User"> | $Enums.Sex
     password?: StringFilter<"User"> | string
     role?: EnumRoleEnumFilter<"User"> | $Enums.RoleEnum
     is_verified?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
+    updated_at?: DateTimeFilter<"User"> | Date | string
     service?: ServiceListRelationFilter
     schedule?: ScheduleListRelationFilter
     CustomerAppointments?: AppointmentListRelationFilter
@@ -7583,10 +7643,12 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    sex?: SortOrder
     password?: SortOrder
     role?: SortOrder
     is_verified?: SortOrder
     created_at?: SortOrder
+    updated_at?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -7602,10 +7664,12 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
+    sex?: EnumSexWithAggregatesFilter<"User"> | $Enums.Sex
     password?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleEnumWithAggregatesFilter<"User"> | $Enums.RoleEnum
     is_verified?: BoolWithAggregatesFilter<"User"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
   export type ServiceWhereInput = {
@@ -7888,10 +7952,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceCreateNestedManyWithoutUserInput
     schedule?: ScheduleCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentCreateNestedManyWithoutCustomerInput
@@ -7903,10 +7969,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceUncheckedCreateNestedManyWithoutUserInput
     schedule?: ScheduleUncheckedCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentUncheckedCreateNestedManyWithoutCustomerInput
@@ -7917,10 +7985,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUpdateManyWithoutCustomerNestedInput
@@ -7932,10 +8002,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUncheckedUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUncheckedUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
@@ -7947,20 +8019,24 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -7968,10 +8044,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ServiceCreateInput = {
@@ -8269,6 +8347,13 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type EnumSexFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    not?: NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+  }
+
   export type EnumRoleEnumFilter<$PrismaModel = never> = {
     equals?: $Enums.RoleEnum | EnumRoleEnumFieldRefInput<$PrismaModel>
     in?: $Enums.RoleEnum[] | ListEnumRoleEnumFieldRefInput<$PrismaModel>
@@ -8327,10 +8412,12 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    sex?: SortOrder
     password?: SortOrder
     role?: SortOrder
     is_verified?: SortOrder
     created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -8342,10 +8429,12 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    sex?: SortOrder
     password?: SortOrder
     role?: SortOrder
     is_verified?: SortOrder
     created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -8353,10 +8442,12 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
+    sex?: SortOrder
     password?: SortOrder
     role?: SortOrder
     is_verified?: SortOrder
     created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -8395,6 +8486,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type EnumSexWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    not?: NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSexFilter<$PrismaModel>
+    _max?: NestedEnumSexFilter<$PrismaModel>
   }
 
   export type EnumRoleEnumWithAggregatesFilter<$PrismaModel = never> = {
@@ -8765,6 +8866,10 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type EnumSexFieldUpdateOperationsInput = {
+    set?: $Enums.Sex
   }
 
   export type EnumRoleEnumFieldUpdateOperationsInput = {
@@ -9212,6 +9317,13 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedEnumSexFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    not?: NestedEnumSexFilter<$PrismaModel> | $Enums.Sex
+  }
+
   export type NestedEnumRoleEnumFilter<$PrismaModel = never> = {
     equals?: $Enums.RoleEnum | EnumRoleEnumFieldRefInput<$PrismaModel>
     in?: $Enums.RoleEnum[] | ListEnumRoleEnumFieldRefInput<$PrismaModel>
@@ -9277,6 +9389,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSexWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Sex | EnumSexFieldRefInput<$PrismaModel>
+    in?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Sex[] | ListEnumSexFieldRefInput<$PrismaModel>
+    not?: NestedEnumSexWithAggregatesFilter<$PrismaModel> | $Enums.Sex
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSexFilter<$PrismaModel>
+    _max?: NestedEnumSexFilter<$PrismaModel>
   }
 
   export type NestedEnumRoleEnumWithAggregatesFilter<$PrismaModel = never> = {
@@ -9593,10 +9715,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     schedule?: ScheduleCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentCreateNestedManyWithoutCustomerInput
     ProviderAppointments?: AppointmentCreateNestedManyWithoutProviderInput
@@ -9607,10 +9731,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     schedule?: ScheduleUncheckedCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentUncheckedCreateNestedManyWithoutCustomerInput
     ProviderAppointments?: AppointmentUncheckedCreateNestedManyWithoutProviderInput
@@ -9674,10 +9800,12 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
+    sex?: EnumSexFilter<"User"> | $Enums.Sex
     password?: StringFilter<"User"> | string
     role?: EnumRoleEnumFilter<"User"> | $Enums.RoleEnum
     is_verified?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
+    updated_at?: DateTimeFilter<"User"> | Date | string
   }
 
   export type AppointmentUpsertWithWhereUniqueWithoutServiceInput = {
@@ -9700,10 +9828,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentCreateNestedManyWithoutCustomerInput
     ProviderAppointments?: AppointmentCreateNestedManyWithoutProviderInput
@@ -9714,10 +9844,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceUncheckedCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentUncheckedCreateNestedManyWithoutCustomerInput
     ProviderAppointments?: AppointmentUncheckedCreateNestedManyWithoutProviderInput
@@ -9899,10 +10031,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceCreateNestedManyWithoutUserInput
     schedule?: ScheduleCreateNestedManyWithoutUserInput
     ProviderAppointments?: AppointmentCreateNestedManyWithoutProviderInput
@@ -9913,10 +10047,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceUncheckedCreateNestedManyWithoutUserInput
     schedule?: ScheduleUncheckedCreateNestedManyWithoutUserInput
     ProviderAppointments?: AppointmentUncheckedCreateNestedManyWithoutProviderInput
@@ -9931,10 +10067,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceCreateNestedManyWithoutUserInput
     schedule?: ScheduleCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentCreateNestedManyWithoutCustomerInput
@@ -9945,10 +10083,12 @@ export namespace Prisma {
     name: string
     email: string
     phone: string
+    sex: $Enums.Sex
     password: string
     role?: $Enums.RoleEnum
     is_verified: boolean
-    created_at: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
     service?: ServiceUncheckedCreateNestedManyWithoutUserInput
     schedule?: ScheduleUncheckedCreateNestedManyWithoutUserInput
     CustomerAppointments?: AppointmentUncheckedCreateNestedManyWithoutCustomerInput
@@ -10020,10 +10160,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUpdateManyWithoutUserNestedInput
     ProviderAppointments?: AppointmentUpdateManyWithoutProviderNestedInput
@@ -10034,10 +10176,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUncheckedUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUncheckedUpdateManyWithoutUserNestedInput
     ProviderAppointments?: AppointmentUncheckedUpdateManyWithoutProviderNestedInput
@@ -10058,10 +10202,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUpdateManyWithoutCustomerNestedInput
@@ -10072,10 +10218,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUncheckedUpdateManyWithoutUserNestedInput
     schedule?: ScheduleUncheckedUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
@@ -10290,10 +10438,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     schedule?: ScheduleUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUpdateManyWithoutCustomerNestedInput
     ProviderAppointments?: AppointmentUpdateManyWithoutProviderNestedInput
@@ -10304,10 +10454,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     schedule?: ScheduleUncheckedUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
     ProviderAppointments?: AppointmentUncheckedUpdateManyWithoutProviderNestedInput
@@ -10318,10 +10470,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AppointmentUpdateWithoutServiceInput = {
@@ -10364,10 +10518,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUpdateManyWithoutCustomerNestedInput
     ProviderAppointments?: AppointmentUpdateManyWithoutProviderNestedInput
@@ -10378,10 +10534,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUncheckedUpdateManyWithoutUserNestedInput
     CustomerAppointments?: AppointmentUncheckedUpdateManyWithoutCustomerNestedInput
     ProviderAppointments?: AppointmentUncheckedUpdateManyWithoutProviderNestedInput
@@ -10392,10 +10550,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
+    sex?: EnumSexFieldUpdateOperationsInput | $Enums.Sex
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleEnumFieldUpdateOperationsInput | $Enums.RoleEnum
     is_verified?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TimeSlotUpdateWithoutScheduleInput = {

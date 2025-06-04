@@ -26,15 +26,22 @@ enum TimeSlotEnum {
   Cancelled
 }
 
+enum Sex {
+  Man
+  woman
+}
+
 model User {
   id                   Int           @id @default(autoincrement())
   name                 String
   email                String
   phone                String
+  sex                  Sex
   password             String
   role                 RoleEnum      @default(Customer)
   is_verified          Boolean
-  created_at           DateTime
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
   service              Service[]
   schedule             Schedule[]
   CustomerAppointments Appointment[] @relation("CustomerAppointments")
