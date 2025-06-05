@@ -1,23 +1,30 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
-import { CreateUserDto, DeleteUserDto, FindUserDto, UpdateUserDto } from "./Dtos";
+import {
+  CreateUserDto,
+  FindUserDto,
+  UpdateUserDto,
+} from "./Dtos";
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async isUserExist(email: string, phone: string) {
+  async isUserExist(id: number) {
     const isExist = await this.prisma.user.findFirst({
-      where: { OR: [{ email: email }, { phone: phone }] },
+      where: { id },
     });
     if (isExist) return false;
     true;
   }
 
-  //create user
+  //create user/
   async create(dataRq: CreateUserDto) {
-    const isuser = await this.isUserExist(dataRq.email, dataRq.phone);
-    if (isuser) return "user already exist";
+    //must refactor
+    const isUser = await this.prisma.user.findFirst({
+      where: { email: dataRq.email, phone: dataRq.phone },
+    });
+    if (isUser) return "user already exist";
     const user = await this.prisma.user.create({
       data: {
         name: dataRq.name,
@@ -65,23 +72,22 @@ export class UserService {
     });
     return user;
   }
-
   //delete user
-  async delete(dataRq: DeleteUserDto) {
-    const isUser = await this.isUserExist(dataRq.email, dataRq.phone);
-    if (!isUser) return "user not found";
-
-    const isDelete = await this.prisma.user.delete({
+  async deleteUserById(id: number) {
+    const isUser = await this.isUserExist(id);
+    if (isUser) return false;
+     await this.prisma.user.delete({
       where: {
-        email: dataRq.email,
+        id,
       },
     });
+    return true
   }
-
-
   //updateUserById
-  async updateUserById(dataRq:UpdateUserDto ,id:number){
-    const user = await this.prisma.user.updateMany({
+  async updateUserById(dataRq: UpdateUserDto, id: number) {
+    const isUserExist = this.prisma.user.findFirst({ where: { id } });
+    if(!isUserExist) return false
+    const user = await this.prisma.user.update({
       where: {
         id,
       },
