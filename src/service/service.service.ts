@@ -19,7 +19,7 @@ export class ServiceService {
   }
 
   //check if service already exist
-  async isServiceByIdExist(id: number) {
+  async isServiceByIdExist(id: string) {
     const isServiceExist = await this.prisma.service.findFirst({
       where: { id },
     });
@@ -46,11 +46,11 @@ export class ServiceService {
     return await this.prisma.service.findMany();
   }
 
-  async getAllServicesWithProviderId(id: number) {
+  async getAllServicesWithProviderId(id: string) {
     return await this.prisma.service.findMany({ where: { provider_id: id } });
   }
 
-  async updateWithProviderId(id: number, dataRq: UpdateServiceDto) {
+  async updateWithProviderId(id: string, dataRq: UpdateServiceDto) {
     return await this.prisma.service.update({
       where: {
         id,
@@ -66,7 +66,7 @@ export class ServiceService {
     });
   }
 
-  async deleteServiceById(id: number) {
+  async deleteServiceById(id: string) {
     return await this.prisma.service.delete({
       where: { id },
     });

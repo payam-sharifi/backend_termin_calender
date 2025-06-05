@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+ 
 }
 
 datasource db {
@@ -29,25 +30,6 @@ enum Sex {
   male
   female
 }
-
-model User {
-  id                   Int           @id @default(autoincrement())
-  name                 String
-  family               String
-  email                String         @unique
-  phone                String         @unique
-  sex                  Sex
-  password             String
-  role                 RoleEnum      @default(Customer)
-  is_verified          Boolean
-  created_at           DateTime      @default(now())
-  updated_at           DateTime      @updatedAt
-  service              Service[]
-  schedule             Schedule[]
-  CustomerAppointments Appointment[] @relation("CustomerAppointments")
-  ProviderAppointments Appointment[] @relation("ProviderAppointments")
-}
-
 enum DaysOfweeksEnum {
   Montag
   Dienstag
@@ -64,10 +46,29 @@ enum StatusEnum {
   Completed
   Cancelled
 }
+model User {
+  id          String           @id @default(uuid())
+  name                 String
+  family               String
+  email                String         @unique
+  phone                String         @unique
+  sex                  Sex
+  password             String
+  role                 RoleEnum      @default(Customer)
+  is_verified          Boolean
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+  service              Service[]
+  schedule             Schedule[]
+  CustomerAppointments Appointment[] @relation("CustomerAppointments")
+  ProviderAppointments Appointment[] @relation("ProviderAppointments")
+}
+
+
 
 //Provider must do it
 model Service {
-  id          Int           @id @default(autoincrement())
+  id          String           @id @default(uuid())
   user        User[]
   provider_id Int // ForeignKey to User (Provider)
   title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
@@ -79,9 +80,9 @@ model Service {
 }
 
 
-//Provider must do it
+//system must do it
 model Schedule {
-  id           Int             @id @default(autoincrement())
+   id          String           @id @default(uuid())
   user         User[]
   timeSlot     TimeSlot[]
   provider_id  Int // # ForeignKey to User
@@ -92,9 +93,9 @@ model Schedule {
 }
 
 model TimeSlot {
-  id          Int           @id @default(autoincrement())
+   id          String           @id @default(uuid())
   schedule    Schedule      @relation(fields: [schedule_id], references: [id])
-  schedule_id Int //# ForeignKey to Schedule
+  schedule_id String //# ForeignKey to Schedule
   start_time  DateTime // # مثال: 2025-06-10 14:00
   end_time    DateTime // # مثال: 2025-06-10 14:30
   status      TimeSlotEnum
@@ -102,15 +103,15 @@ model TimeSlot {
 }
 
 model Appointment {
-  id           Int        @id @default(autoincrement())
+  id          String           @id @default(uuid())
   customer     User       @relation("CustomerAppointments", fields: [customer_id], references: [id])
-  customer_id  Int // # ForeignKey to User (Customer)
+  customer_id  String // # ForeignKey to User (Customer)
   provider     User       @relation("ProviderAppointments", fields: [provider_id], references: [id])
-  provider_id  Int //# ForeignKey to User (Provider)
+  provider_id  String //# ForeignKey to User (Provider)
   service      Service    @relation(fields: [service_id], references: [id])
-  service_id   Int // # ForeignKey to Service
+  service_id   String // # ForeignKey to Service
   timeSlot     TimeSlot   @relation(fields: [time_slot_id], references: [id])
-  time_slot_id Int // # ForeignKey to TimeSlot
+  time_slot_id String // # ForeignKey to TimeSlot
   status       StatusEnum
   notes        String // # توضیحات مشتری
   created_at   DateTime

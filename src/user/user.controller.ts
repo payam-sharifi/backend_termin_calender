@@ -18,7 +18,7 @@ export class UserController {
 
   //GetUserById
   @Get("/:id")
-  async getUser(@Param("id", ParseIntPipe) id: number) {
+  async getUser(@Param("id", ParseIntPipe) id: string) {
     const user = await this.userService.GetOneUserById(id);
     if (!user) {
       throw new NotFoundException("User Not Found");
@@ -45,7 +45,7 @@ export class UserController {
   @Put("/:id")
   async updateUser(
     @Body() body: UpdateUserDto,
-    @Param("id", ParseIntPipe) id: number
+    @Param("id", ParseIntPipe) id: string
   ) {
     const updatedUser = await this.userService.updateUserById(body, id);
     if (!updatedUser) {
@@ -55,7 +55,7 @@ export class UserController {
   }
 
   @Delete("/:id")
-  async deleteUser(@Param("id", ParseIntPipe) id: number) {
+  async deleteUser(@Param("id", ParseIntPipe) id: string) {
     const deletedUser = await this.userService.deleteUserById(id);
     if (!deletedUser) {
       throw new NotFoundException("User Not Found Or ");

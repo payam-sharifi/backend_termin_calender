@@ -5,12 +5,13 @@ import {
   FindUserDto,
   UpdateUserDto,
 } from "./Dtos";
+import { UUID } from "crypto";
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async isUserExist(id: number) {
+  async isUserExist(id: string) {
     const isExist = await this.prisma.user.findFirst({
       where: { id },
     });
@@ -64,7 +65,7 @@ export class UserService {
     return user;
   }
   //getOneUserId...
-  async GetOneUserById(id: number) {
+  async GetOneUserById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -73,7 +74,7 @@ export class UserService {
     return user;
   }
   //delete user
-  async deleteUserById(id: number) {
+  async deleteUserById(id: string) {
     const isUser = await this.isUserExist(id);
     if (isUser) return false;
      await this.prisma.user.delete({
@@ -84,7 +85,7 @@ export class UserService {
     return true
   }
   //updateUserById
-  async updateUserById(dataRq: UpdateUserDto, id: number) {
+  async updateUserById(dataRq: UpdateUserDto, id:string) {
     const isUserExist = this.prisma.user.findFirst({ where: { id } });
     if(!isUserExist) return false
     const user = await this.prisma.user.update({

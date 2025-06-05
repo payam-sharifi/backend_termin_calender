@@ -39,7 +39,7 @@ export class ServiceController {
 
   //getAllServiceWithProvider_id
   @Get("/:id")
-  async getAllServiceWithProvider_id(@Param("id", ParseIntPipe) id: number) {
+  async getAllServiceWithProvider_id(@Param("id", ParseIntPipe) id: string) {
     const servicesByProvider =
       await this.service.getAllServicesWithProviderId(id);
     if (!servicesByProvider) return `NO SERVICES REGISTER YET FOR ${id}`;
@@ -49,7 +49,7 @@ export class ServiceController {
   @Put("/:id")
   async updateServiceById(
     @Body() body: UpdateServiceDto,
-    @Param("id", ParseIntPipe) id: number
+    @Param("id", ParseIntPipe) id: string
   ) {
     const updateByProvider = await this.service.updateWithProviderId(id, body);
     if (!updateByProvider)
@@ -61,7 +61,7 @@ export class ServiceController {
   updateServiceByDate() {}
 
   @Delete(":id")
-  async deleteServiceById(@Param("id", ParseIntPipe) id: number) {
+  async deleteServiceById(@Param("id", ParseIntPipe) id: string) {
     const IsServiceExist = await this.service.isServiceByIdExist(id);
     if (!IsServiceExist) return "Service does not exist maybe already deleted";
     const deleteService = await this.service.deleteServiceById(id);

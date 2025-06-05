@@ -7,7 +7,7 @@ export class AppointmentService {
 
     constructor(private readonly prisma: PrismaService) {}
 
-    async isUserExist(id: number) {
+    async isUserExist(id: string) {
       const isExist = await this.prisma.user.findFirst({
         where: { id },
       });
