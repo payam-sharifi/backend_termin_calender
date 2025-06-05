@@ -1,14 +1,19 @@
-import { Body, Controller, Delete, Get, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CreateUserDto } from "./Dtos/create-user.dto";
+import { CreateUserDto, UpdateUserDto } from "./Dtos";
+
 
 @Controller("/user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getUsers(): string {
-    return "Hello World!";
+  @Get('/:id')
+  async getUser(@Param("id",ParseIntPipe)  id:number) {
+    const user=await this.userService.GetOneUserById(id)
+     if(!user){ 
+       throw new NotFoundException("User Not Found")
+    }
+    return user;
   }
 
   @Post()
@@ -18,8 +23,8 @@ export class UserController {
   }
 
   @Put("/:id")
-  updateUser(): string {
-    return "user updated";
+  async updateUser(@Body() body: UpdateUserDto,@Param("id",ParseIntPipe)  id:number ) {
+    const user= await this.userService.updateUserById(body,id)
   }
 
   @Delete("/:id")

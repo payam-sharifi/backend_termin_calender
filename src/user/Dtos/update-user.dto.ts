@@ -1,7 +1,7 @@
 import { RoleEnum, Sex } from "@prisma/client";
-import { IsString, IsBoolean, IsEmpty } from "class-validator";
+import { IsString, IsBoolean } from "class-validator";
 
-export class CreateUserDto {
+export class UpdateUserDto {
   @IsString()
   name: string;
   @IsString()
