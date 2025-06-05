@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { CreateServiceDto } from "./Dtos/create-service";
+import { CreateServiceDto } from "./Dtos/create-service.dto";
 import { PrismaService } from "prisma/prisma.service";
-import { UpdateServiceDto } from "./Dtos/update-service";
+import { UpdateServiceDto } from "./Dtos/update-service.dto";
+import { DeleteUserDto } from "src/user/Dtos";
+import { DeleteServiceDto } from "./Dtos/delete-service.dto";
 
 @Injectable()
 export class ServiceService {
@@ -16,6 +18,14 @@ export class ServiceService {
     return false;
   }
 
+  //check if service already exist
+  async isServiceByIdExist(id: number) {
+    const isServiceExist = await this.prisma.service.findFirst({
+      where: { id },
+    });
+    if (isServiceExist) return true;
+    return false;
+  }
   //create new service
   async create(dataRq: CreateServiceDto) {
     const CreateService = await this.prisma.service.create({
@@ -55,4 +65,16 @@ export class ServiceService {
       },
     });
   }
+
+  async deleteServiceById(id: number) {
+    return await this.prisma.service.delete({
+      where: { id },
+    });
+  }
+
+  async deleteServiceByTitle(body:DeleteServiceDto) {
+     return await this.prisma.service.deleteMany({
+       where: { title:body.title },
+     });
+   }
 }

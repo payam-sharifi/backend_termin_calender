@@ -8,10 +8,9 @@ import {
   Post,
   Put,
 } from "@nestjs/common";
-import { CreateServiceDto } from "./Dtos/create-service";
+import { CreateServiceDto } from "./Dtos/create-service.dto";
 import { ServiceService } from "./service.service";
-import { Prisma } from "@prisma/client";
-import { UpdateServiceDto } from "./Dtos/update-service";
+import { UpdateServiceDto } from "./Dtos/update-service.dto";
 
 @Controller("service")
 export class ServiceController {
@@ -62,7 +61,12 @@ export class ServiceController {
   updateServiceByDate() {}
 
   @Delete(":id")
-  deleteServiceById() {}
+  async deleteServiceById(@Param("id", ParseIntPipe) id: number) {
+    const IsServiceExist = await this.service.isServiceByIdExist(id);
+    if (!IsServiceExist) return "Service does not exist maybe already deleted";
+    const deleteService = await this.service.deleteServiceById(id);
+    return [deleteService, "service successfully updated "];
+  }
 
   @Delete("date")
   deleteServiceByDate() {}
