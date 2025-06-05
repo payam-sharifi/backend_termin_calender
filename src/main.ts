@@ -8,13 +8,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
 
   const config = new DocumentBuilder()
-    .setTitle('Appointment App')
+    .setTitle('Appointment Api')
     .setDescription('Api for Appointment')
     .setVersion('1.0')
     .addTag('Appointemnt')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('swagger', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3001);
 }

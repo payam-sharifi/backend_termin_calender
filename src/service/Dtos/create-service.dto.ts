@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 export class CreateServiceDto {
    
   @IsNumber()
-  provider_id:number // ForeignKey to User (Provider)
+  provider_id:string // ForeignKey to User (Provider)
   @IsString()
   title: string; 
 

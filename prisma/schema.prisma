@@ -70,7 +70,7 @@ model User {
 model Service {
   id          String           @id @default(uuid())
   user        User[]
-  provider_id Int // ForeignKey to User (Provider)
+  provider_id String // ForeignKey to User (Provider)
   title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
   duration    Int // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
   price       Float // قیمت (اختیاری)
@@ -85,7 +85,7 @@ model Schedule {
    id          String           @id @default(uuid())
   user         User[]
   timeSlot     TimeSlot[]
-  provider_id  Int // # ForeignKey to User
+  provider_id  String // # ForeignKey to User
   day_of_week  DaysOfweeksEnum
   start_time   String //# ساعت شروع کار (مثلا 08:00)
   end_time     String //  # ساعت پایان کار (مثلا 17:00)

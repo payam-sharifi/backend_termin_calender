@@ -14,6 +14,6 @@ export class CreateScheduleDto {
   @IsString()
   day_of_week: DaysOfweeksEnum;
 
-  @IsNumber()
+  @IsString()
   provider_id: string;
 }
