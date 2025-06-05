@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -34,6 +33,7 @@ enum Sex {
 model User {
   id                   Int           @id @default(autoincrement())
   name                 String
+  family               String
   email                String
   phone                String
   sex                  Sex
