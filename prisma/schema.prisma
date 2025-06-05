@@ -65,6 +65,7 @@ enum StatusEnum {
   Cancelled
 }
 
+//Provider must do it
 model Service {
   id          Int           @id @default(autoincrement())
   user        User[]
@@ -77,6 +78,8 @@ model Service {
   Appointment Appointment[]
 }
 
+
+//Provider must do it
 model Schedule {
   id           Int             @id @default(autoincrement())
   user         User[]
