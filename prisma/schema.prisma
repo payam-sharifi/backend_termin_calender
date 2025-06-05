@@ -26,8 +26,8 @@ enum TimeSlotEnum {
 }
 
 enum Sex {
-  Man
-  woman
+  male
+  female
 }
 
 model User {
