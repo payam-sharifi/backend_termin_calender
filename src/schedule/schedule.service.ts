@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateScheduleDto } from "./Dtos/create.schedule.dtos";
+import { CreateTimeSlotDto } from "src/time-slot/Dtos/timeslot.dtos";
 
 @Injectable()
 export class ScheduleService {
@@ -35,15 +36,15 @@ export class ScheduleService {
   }
 
   async createManySchedules(body: CreateScheduleDto[]) {
-      const data = await this.ExistingSchedule(body);
-      const createSchedules = await this.prisma.schedule.createMany({
-        data: data,
-        skipDuplicates: true,
-      });
-      return createSchedules;
-   
+    const data = await this.ExistingSchedule(body);
+    const createSchedules = await this.prisma.schedule.createMany({
+      data: data,
+      skipDuplicates: true,
+    });
+    return createSchedules;
   }
 
-
-  
+  // async getAllSchedulesBYDate(body:CreateTimeSlotDto) {
+  //   return await this.prisma.schedule.findMany();
+  // }
 }
