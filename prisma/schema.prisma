@@ -114,5 +114,6 @@ model Appointment {
   time_slot_id String // # ForeignKey to TimeSlot
   status       StatusEnum
   notes        String // # توضیحات مشتری
-  created_at   DateTime
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
 }

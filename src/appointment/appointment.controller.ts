@@ -1,34 +1,36 @@
-import { Controller, Delete, Get, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Put } from "@nestjs/common";
 import { CreateAppintmentDto } from "./Dtos/create-appointment.dtos";
 import { AppointmentService } from "./appointment.service";
 
-
 @Controller("appointment")
 export class AppointmentController {
-constructor(private readonly appointmentService:AppointmentService){}
-  @Post()  
-  createApppoinment(dataRq:CreateAppintmentDto) {
-    const IsAppointment=this.appointmentService.create(dataRq)
+  constructor(private readonly appointmentService: AppointmentService) {}
+  @Post()
+  createApppoinment(dataRq: CreateAppintmentDto) {
+    if (dataRq) return this.appointmentService.create(dataRq);
+    return "you send empty data";
   }
 
   @Get()
-  getAllAppoinment() {}
+  getAllAppoinment() {
+    return this.appointmentService.getAllAppointments();
+  }
 
-  @Get('date')
+  @Get("date")
   getAppoinmentByDate() {}
 
-  @Get(':id')
+  @Get(":id")
   getAppontmentById() {}
 
-  @Put('id')
+  @Put("id")
   updateApppoinmentById() {}
 
-  @Put('date')
+  @Put("date")
   updateApppoinmentByDate() {}
 
   @Delete(":id")
   deleteApppoinmentById() {}
 
-  @Delete('date')
+  @Delete("date")
   deleteApppoinmentByDate() {}
 }

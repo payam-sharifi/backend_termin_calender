@@ -1,5 +1,5 @@
 import { RoleEnum, Sex } from "@prisma/client";
-import { IsString, IsBoolean, IsEmpty } from "class-validator";
+import { IsString, IsBoolean, IsEmpty, IsOptional } from "class-validator";
 
 export class CreateUserDto {
   @IsString()
@@ -14,8 +14,10 @@ export class CreateUserDto {
   sex: Sex;
   @IsString()
   password: string;
+  @IsOptional()
   @IsString()
   role: RoleEnum;
+  @IsOptional()
   @IsBoolean()
   is_verified: boolean;
 }
