@@ -6,10 +6,17 @@ import { CreateScheduleDto } from './Dtos/create.schedule.dtos';
 export class ScheduleController {
 constructor(private readonly schedule:ScheduleService){}
 @Post()
-async createSchedule(@Body() body:CreateScheduleDto){
+async createSchedule(@Body() body:CreateScheduleDto[]){
+   if(body){
     const schedules=await this.schedule.createManySchedules(body)
-    return schedules
+    return `${schedules.count}row(s) Added`
+   }else return "you have sent empty request"
+
 }
 
+// @Get()
+// async getAllSchulde(){
+    
+// }
     
 }

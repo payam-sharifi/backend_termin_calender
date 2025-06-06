@@ -1,7 +1,8 @@
 import { DaysOfweeksEnum } from "@prisma/client";
-import { IsBoolean, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 export class CreateScheduleDto {
+  
   @IsString()
   start_time: string;
 

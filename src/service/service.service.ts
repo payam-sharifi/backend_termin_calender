@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { CreateServiceDto } from "./Dtos/create-service.dto";
 import { PrismaService } from "prisma/prisma.service";
 import { UpdateServiceDto } from "./Dtos/update-service.dto";
-import { DeleteUserDto } from "src/user/Dtos";
 import { DeleteServiceDto } from "./Dtos/delete-service.dto";
 
 @Injectable()
