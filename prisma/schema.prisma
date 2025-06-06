@@ -69,8 +69,8 @@ model User {
 //Provider must do it
 model Service {
   id          String           @id @default(uuid())
-  user        User[]
-  provider_id String // ForeignKey to User (Provider)
+  user        User[] 
+  provider_id String  // ForeignKey to User (Provider)
   title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
   duration    Int // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
   price       Float // قیمت (اختیاری)

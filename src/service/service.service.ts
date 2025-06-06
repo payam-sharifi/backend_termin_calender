@@ -34,7 +34,7 @@ export class ServiceService {
         duration: dataRq.duration,
         is_active: dataRq.is_active,
         price: dataRq.price || 0,
-        description: dataRq.description,
+        description: dataRq.description || "",
       },
     });
     return CreateService;
