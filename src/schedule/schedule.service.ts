@@ -38,7 +38,7 @@ export class ScheduleService {
   // }
 
   // تابع خودکار برای ایجاد TimeSlotها
-  
+
   //Auto Genereate TileSlots
   async generateTimeSlots(bodies: CreateScheduleDto[]) {
     const schedules = await this.prisma.schedule.findMany({
@@ -89,10 +89,42 @@ export class ScheduleService {
     this.generateTimeSlots(body);
     return createSchedules;
   }
-
-
-
-  // async getAllSchedulesBYDate(body:CreateTimeSlotDto) {
-  //   return await this.prisma.schedule.findMany();
+  // async getAvailableTimeSlot(start_time: string, end_time: string, status?:any) {
+  //   return this.prisma.timeSlot.findMany({
+  //     relationLoadStrategy: 'join',
+  //     where: {
+  //       status,
+  //       start_time: new Date(start_time),
+  //       end_time:new Date(end_time)
+  //     },
+  //     include: {
+  //       schedule: true,
+  //       Appointment:true
+  //     },
+  //   });
   // }
+
+  async getAllSchedulesByDate(
+    start_time: string,
+    end_time: string,
+     is_available?: any
+  ) {
+    const time = await this.prisma.schedule.findMany({
+      relationLoadStrategy: "join",
+      where: {
+        start_time: {
+          gte: new Date(start_time),
+        },
+        end_time: {
+          lte: new Date(end_time),
+        },
+        is_available:is_available=="true"?true:false
+      },
+      include: {
+        timeSlot: true,
+        //   Appointment:true
+      },
+    });
+    return time;
+  }
 }

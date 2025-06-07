@@ -11,8 +11,18 @@ export class AppointmentController {
     return "you send empty data";
   }
 
+  // @Get()
+  // async AvailableTimeSlot(
+  //   @Query('start_time') start_time: string,
+  //   @Query('end_time') end_time: string,
+  //   @Query('status') status: string 
+  // ) {
+   
+  //   return this.timeSlot.getAvailableTimeSlot(start_time, end_time, status);
+  // }
+
   @Get()
-  getAllAppoinment() {
+  getAllAppoinmentsByDate() {
     return this.appointmentService.getAllAppointments();
   }
 
