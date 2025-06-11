@@ -39,7 +39,7 @@ export class ServiceController {
 
   //getAllServiceWithProvider_id
   @Get("/:id")
-  async getAllServiceWithProvider_id(@Param("id", ParseIntPipe) id: string) {
+  async getAllServiceWithProvider_id(@Param("id") id: string) {
     const servicesByProvider =
       await this.service.getAllServicesWithProviderId(id);
     if (!servicesByProvider) return `NO SERVICES REGISTER YET FOR ${id}`;

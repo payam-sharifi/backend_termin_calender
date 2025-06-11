@@ -18,12 +18,16 @@ export class UserController {
 
   //GetUserById
   @Get("/:id")
-  async getUser(@Param("id", ParseIntPipe) id: string) {
-    const user = await this.userService.GetOneUserById(id);
-    if (!user) {
-      throw new NotFoundException("User Not Found");
+  async getUser(@Param("id") id: string) {
+    try {
+      const user = await this.userService.GetOneUserById(id);
+      if (!user) {
+        throw new NotFoundException("User Not Found");
+      }
+      return user;
+    } catch (error) {
+      console.log(error);
     }
-    return user;
   }
 
   //GetAllUsers
@@ -55,7 +59,7 @@ export class UserController {
   }
 
   @Delete("/:id")
-  async deleteUser(@Param("id", ParseIntPipe) id: string) {
+  async deleteUser(@Param("id") id: string) {
     const deletedUser = await this.userService.deleteUserById(id);
     if (!deletedUser) {
       throw new NotFoundException("User Not Found Or ");

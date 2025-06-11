@@ -42,11 +42,20 @@ export class ServiceService {
 
   //getAllServices
   async getAllServices() {
-    return await this.prisma.service.findMany();
+    return await this.prisma.service.findMany({
+      relationLoadStrategy: "join",
+      include: {
+        timeSlots: true,
+      },
+    });
   }
 
   async getAllServicesWithProviderId(id: string) {
-    return await this.prisma.service.findMany({ where: { provider_id: id } });
+    return await this.prisma.service.findMany({
+      relationLoadStrategy: "join",
+      where: { provider_id: id },
+      include: { timeSlots: true },
+    });
   }
 
   async updateWithProviderId(id: string, dataRq: UpdateServiceDto) {
@@ -71,9 +80,9 @@ export class ServiceService {
     });
   }
 
-  async deleteServiceByTitle(body:DeleteServiceDto) {
-     return await this.prisma.service.deleteMany({
-       where: { title:body.title },
-     });
-   }
+  async deleteServiceByTitle(body: DeleteServiceDto) {
+    return await this.prisma.service.deleteMany({
+      where: { title: body.title },
+    });
+  }
 }

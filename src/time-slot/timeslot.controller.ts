@@ -1,17 +1,24 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { TimeSlotService } from "./timeslot.service";
-
+import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
+import { getTimeSlotsDto } from "./Dtos/timeslot.dtos";
 
 @Controller("timeslot")
 export class TimeSlotController {
   constructor(private readonly timeSlot: TimeSlotService) {}
   @Get()
-  async AvailableTimeSlot(
-    @Query('start_time') start_time: string,
-    @Query('end_time') end_time: string,
-    @Query('status') status: string 
-  ) {
-   
-    return this.timeSlot.getAvailableTimeSlot(start_time, end_time, status);
+  async AvailableTimeSlot(@Body() body:getTimeSlotsDto)
+
+   {
+    return this.timeSlot.getAvailableTimeSlot(body);
+  }
+
+ 
+
+
+  @Post()
+  async CreateTimeSlots(@Body() body: CreateTimeSlotDto) {
+    if(!body) return "body is empty"
+    return this.timeSlot.createTimeSlots(body)
   }
 }

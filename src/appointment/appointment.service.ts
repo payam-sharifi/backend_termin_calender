@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateAppintmentDto } from "./Dtos/create-appointment.dtos";
+import { GetAppintmentDto } from "./Dtos/get-appointment.dtos";
 
 @Injectable()
 export class AppointmentService {
@@ -22,7 +23,12 @@ export class AppointmentService {
     return appointment;
   }
 
-  async getAllAppointments() {
-    return this.prisma.appointment.findMany();
+  async getAllAppointments(body: GetAppintmentDto) {
+    return this.prisma.appointment.findMany({
+      relationLoadStrategy: "join",
+      include: {
+        timeSlot: true,
+      },
+    });
   }
 }

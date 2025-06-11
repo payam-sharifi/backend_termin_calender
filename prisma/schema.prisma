@@ -69,12 +69,13 @@ model User {
 //Provider must do it
 model Service {
   id          String           @id @default(uuid())
-  user        User[] 
+  user        User @relation(fields: [provider_id], references: [id])
   provider_id String  // ForeignKey to User (Provider)
   title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
   duration    Int // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
   price       Float // قیمت (اختیاری)
   description String
+  timeSlots    TimeSlot[]
   is_active   Boolean
   Appointment Appointment[]
 }
@@ -84,7 +85,7 @@ model Service {
 model Schedule {
    id          String           @id @default(uuid())
   user         User[]
-  timeSlot     TimeSlot[]
+ // timeSlot     TimeSlot[]
   provider_id  String // # ForeignKey to User
   day_of_week  DaysOfweeksEnum
   start_time   DateTime //# 1970-01-01T09:00:00Z
@@ -94,8 +95,10 @@ model Schedule {
 //system must do it
 model TimeSlot {
   id          String           @id @default(uuid())
-  schedule    Schedule      @relation(fields: [schedule_id], references: [id])
-  schedule_id String //# ForeignKey to Schedule
+  //schedule    Schedule      @relation(fields: [schedule_id], references: [id])
+  service    Service      @relation(fields: [service_id], references: [id])
+    service_id  String // # ForeignKey to User
+ // schedule_id String //# ForeignKey to Schedule
   start_time  DateTime // # مثال: 2025-06-10 14:00
   end_time    DateTime // # مثال: 2025-06-10 14:30
   status      TimeSlotEnum

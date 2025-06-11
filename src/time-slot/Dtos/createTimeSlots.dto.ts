@@ -1,26 +1,21 @@
 import { Appointment, Schedule, TimeSlotEnum } from "@prisma/client";
 import { IsNumber, IsOptional, IsString } from "class-validator";
 
-export class getTimeSlotsDto {
+export class CreateTimeSlotDto {
   @IsOptional()
-  @IsString()
-  service_Id: string; // ForeignKey to  (schedule)
-
-  // @IsOptional()
-  // @IsString()
-  // user_Id: string;
+  @IsNumber()
+  schedule_id: string; // ForeignKey to  (schedule)
 
   @IsString()
   start_time: string;
 
   @IsString()
-  end_time: string;
+  service_id: string;
 
   @IsString()
+  end_time: string;
+
+  @IsOptional()
+  @IsString()
   status: TimeSlotEnum;
-
-  //Appointment: Appointment;
-  //  schedule: Schedule;
-
-  // @Query("user_Id") user_Id: string,
 }

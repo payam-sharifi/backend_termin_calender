@@ -69,7 +69,7 @@ export class ScheduleService {
           data: {
             start_time: currentTime,
             end_time: endTime,
-            schedule_id: schedule.id,
+            service_id: schedule.id,
             status: "Available",
           },
         });
@@ -107,7 +107,7 @@ export class ScheduleService {
   async getAllSchedulesByDate(
     start_time: string,
     end_time: string,
-     is_available?: any
+    is_available?: any
   ) {
     const time = await this.prisma.schedule.findMany({
       relationLoadStrategy: "join",
@@ -118,12 +118,12 @@ export class ScheduleService {
         end_time: {
           lte: new Date(end_time),
         },
-        is_available:is_available=="true"?true:false
+        is_available: is_available == "true" ? true : false,
       },
-      include: {
-        timeSlot: true,
-        //   Appointment:true
-      },
+      // include: {
+      //   timeSlot: true,
+      // },
+     
     });
     return time;
   }

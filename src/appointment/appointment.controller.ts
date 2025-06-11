@@ -1,13 +1,15 @@
 import { Body, Controller, Delete, Get, Post, Put } from "@nestjs/common";
 import { CreateAppintmentDto } from "./Dtos/create-appointment.dtos";
 import { AppointmentService } from "./appointment.service";
+import { GetAppintmentDto } from "./Dtos/get-appointment.dtos";
 
 @Controller("appointment")
 export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
   @Post()
-  createApppoinment(dataRq: CreateAppintmentDto) {
-    if (dataRq) return this.appointmentService.create(dataRq);
+  createApppoinment(@Body() body: CreateAppintmentDto) {
+    console.log(body,"CreateAppintmentDto")
+    if (body) return this.appointmentService.create(body);
     return "you send empty data";
   }
 
@@ -22,8 +24,13 @@ export class AppointmentController {
   // }
 
   @Get()
-  getAllAppoinmentsByDate() {
-    return this.appointmentService.getAllAppointments();
+  getAllAppoinmentsByDateAndId(@Body() body:GetAppintmentDto) {
+    try {
+      if(body)return this.appointmentService.getAllAppointments(body);
+      return "you sent empty information"
+    } catch (error) {
+     console.log(error) 
+    }
   }
 
   @Get("date")
