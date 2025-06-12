@@ -7,17 +7,19 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { CreateServiceDto } from "./Dtos/create-service.dto";
 import { ServiceService } from "./service.service";
 import { UpdateServiceDto } from "./Dtos/update-service.dto";
+import { GetServiceDto } from "./Dtos/get-services.dto";
 
 @Controller("service")
 export class ServiceController {
   constructor(private readonly service: ServiceService) {}
 
   //create service
-  @Post()
+  @Post("/create")
   async createService(@Body() body: CreateServiceDto) {
     if (body) {
       const IsServiceExist = await this.service.isServiceExist(body);
@@ -38,11 +40,13 @@ export class ServiceController {
   }
 
   //getAllServiceWithProvider_id
-  @Get("/:id")
-  async getAllServiceWithProvider_id(@Param("id") id: string) {
+  @Post()
+  async getAllServiceWithProvider_id(@Body() body:GetServiceDto) {
+   
     const servicesByProvider =
-      await this.service.getAllServicesWithProviderId(id);
-    if (!servicesByProvider) return `NO SERVICES REGISTER YET FOR ${id}`;
+      await this.service.getAllServicesWithProviderId(body);
+  
+    if (!servicesByProvider) return null;
     return servicesByProvider;
   }
 

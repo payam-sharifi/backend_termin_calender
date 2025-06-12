@@ -3,6 +3,7 @@ import { CreateServiceDto } from "./Dtos/create-service.dto";
 import { PrismaService } from "prisma/prisma.service";
 import { UpdateServiceDto } from "./Dtos/update-service.dto";
 import { DeleteServiceDto } from "./Dtos/delete-service.dto";
+import { GetServiceDto } from "./Dtos/get-services.dto";
 
 @Injectable()
 export class ServiceService {
@@ -50,13 +51,30 @@ export class ServiceService {
     });
   }
 
-  async getAllServicesWithProviderId(id: string) {
+  async getAllServicesWithProviderId(body:GetServiceDto) {
+    const startDateTime = new Date(`${body.start_time}T00:00:00.000Z`);
+    const endDateTime = new Date(new Date(body.end_time));
+    endDateTime.setDate(endDateTime.getDate() + 1);
     return await this.prisma.service.findMany({
       relationLoadStrategy: "join",
-      where: { provider_id: id },
-      include: { timeSlots: true },
+      where: {
+        provider_id: body.provider_id,
+      },
+      include: {
+        timeSlots: {
+          where: {
+            start_time: {
+              gte:startDateTime //new Date(start_date),
+            },
+            end_time: {
+              lte: endDateTime//new Date(end_date),
+            },
+          },
+        },
+      },
     });
   }
+  
 
   async updateWithProviderId(id: string, dataRq: UpdateServiceDto) {
     return await this.prisma.service.update({
