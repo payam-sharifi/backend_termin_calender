@@ -45,7 +45,6 @@ export class ServiceController {
    
     const servicesByProvider =
       await this.service.getAllServicesWithProviderId(body);
-  
     if (!servicesByProvider) return null;
     return servicesByProvider;
   }
