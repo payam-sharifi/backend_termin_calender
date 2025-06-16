@@ -1,10 +1,10 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateServiceDto {
   @ApiProperty({ example: "provider-uuid-123", description: "شناسه ارائه‌دهنده سرویس" })
   @IsString()
-  provider_id: string; // ForeignKey to User (Provider)
+  provider_id: string;
 
   @ApiProperty({ example: "Hairstyling", description: "عنوان سرویس" })
   @IsString()
@@ -12,7 +12,8 @@ export class CreateServiceDto {
 
   @ApiProperty({ example: 30, description: "مدت زمان سرویس به دقیقه" })
   @IsNumber()
-  duration: number; // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
+  @Min(1, { message: "Die Dauer muss mindestens 1 Minute sein." })
+  duration: number;
 
   @ApiProperty({ example: true, description: "وضعیت فعال بودن سرویس" })
   @IsBoolean()
@@ -21,6 +22,7 @@ export class CreateServiceDto {
   @ApiPropertyOptional({ example: 100, description: "قیمت سرویس (اختیاری)" })
   @IsOptional()
   @IsNumber()
+  @Min(0, { message: "Der Preis darf nicht negativ sein." })
   price?: number;
 
   @ApiPropertyOptional({ example: "#C9D1AC", description: "رنگ مرتبط با سرویس (اختیاری)" })

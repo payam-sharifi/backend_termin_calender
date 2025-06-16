@@ -3,20 +3,20 @@ import { IsEnum, IsOptional, IsString } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class GetTimeslotDto {
-  @ApiPropertyOptional({ description: "Service ID (foreign key to schedule)", example: "uuid-string" })
+  @ApiPropertyOptional({ description: "Dienst-ID (Fremdschlüssel zu Schedule)", example: "uuid-string" })
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'Die Dienst-ID muss eine Zeichenkette sein.' })
   service_id?: string;
 
-  @ApiProperty({ description: "Start time in ISO format", example: "2025-06-15T08:00:00Z" })
-  @IsString()
+  @ApiProperty({ description: "Startzeit im ISO-Format", example: "2025-06-15" })
+  @IsString({ message: 'Die Startzeit muss im ISO-Format als Zeichenkette angegeben werden.' })
   start_time: string;
 
-  @ApiProperty({ description: "End time in ISO format", example: "2025-06-15T09:00:00Z" })
-  @IsString()
+  @ApiProperty({ description: "Endzeit im ISO-Format", example: "2025-06-15" })
+  @IsString({ message: 'Die Endzeit muss im ISO-Format als Zeichenkette angegeben werden.' })
   end_time: string;
 
-  @ApiProperty({ description: "Status of time slot", enum: TimeSlotEnum, example: "Available" })
-  @IsEnum(TimeSlotEnum)
+  @ApiProperty({ description: "Status des Zeitfensters", enum: TimeSlotEnum, example: "AVAILABLE" })
+  @IsEnum(TimeSlotEnum, { message: 'Der Zeitfensterstatus ist ungültig. Zulässige Werte: AVAILABLE, UNAVAILABLE usw.' })
   status: TimeSlotEnum;
 }
