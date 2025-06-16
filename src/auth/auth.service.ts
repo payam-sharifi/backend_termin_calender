@@ -1,11 +1,13 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateUserDto } from "src/user/Dtos";
 import * as bcrypt from "bcrypt";
+import { UpdateUserDto } from "./Dtos/UpdateUserDto";
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
@@ -51,4 +53,54 @@ export class AuthService {
     const { password: _, ...result } = user;
     return result;
   }
+
+ // 🔁 بروزرسانی کاربر
+ async updateUser(id: string, body: UpdateUserDto) {
+  try {
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: body,
+      select: {
+        id: true,
+        name: true,
+        family: true,
+        email: true,
+        phone: true,
+        sex: true,
+        role: true,
+      },
+    });
+    return {
+      success: true,
+      message: "User updated successfully",
+      data: updated,
+    };
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new NotFoundException("User not found");
+    }
+    throw error;
+  }
+}
+
+// ❌ حذف کاربر
+async deleteUser(id: string) {
+  try {
+    const deleted = await this.prisma.user.delete({
+      where: { id },
+    });
+    return {
+      success: true,
+      message: "User deleted successfully",
+      data: deleted,
+    };
+  } catch (error) {
+    if (error.code === "P2025") {
+      throw new NotFoundException("User not found or already deleted");
+    }
+    throw error;
+  }
+}
+
+  
 }

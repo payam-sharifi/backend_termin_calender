@@ -1,26 +1,30 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app/app.module";
+import { ValidationPipe } from "@nestjs/common";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe())
-// app.enableCors({
-//   origin:'http://localhost:3000',
-//   methods:'GET,POST,PUT,DELETE'
-// })
-app.enableCors()
-  const config = new DocumentBuilder()
-    .setTitle('Appointment Api')
-    .setDescription('Api for Appointment')
-    .setVersion('1.0')
-    .addTag('Appointemnt')
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, documentFactory);
+  const configService = app.get(ConfigService);
+  app.useGlobalPipes(new ValidationPipe());
+  app.enableCors();
 
-  await app.listen(process.env.PORT ?? 3001);
+  const config = new DocumentBuilder()
+    .setTitle("Reservation API")
+    .setDescription("API for Reservation")
+    .setVersion("1.0")
+    .addTag("Reservation")
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("swagger", app, document);
+
+  const port = configService.get<number>("PORT") || 3004;
+
+  await app.listen(port);
+
+  console.log(`Application is running on: http://localhost:${port}`);
 }
+
 bootstrap();

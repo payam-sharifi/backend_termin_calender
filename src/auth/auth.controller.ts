@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
+  Put,
   Request,
   UseGuards,
 } from "@nestjs/common";
@@ -20,6 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { UpdateUserDto } from "./Dtos/UpdateUserDto";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
@@ -61,5 +65,20 @@ export class AuthController {
   @ApiResponse({ status: 200, description: "User profile retrieved" })
   profile(@Request() req: any) {
     return req.user;
+  }
+
+  @UseGuards(JwtAuthGaurd)
+  @ApiBearerAuth()
+  @Put("update/:id")
+  @ApiBody({ type: UpdateUserDto })
+  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
+    return this.authService.updateUser(id, body);
+  }
+
+  @UseGuards(JwtAuthGaurd)
+  @ApiBearerAuth()
+  @Delete("delete/:id")
+  async deleteUser(@Param("id") id: string) {
+    return this.authService.deleteUser(id);
   }
 }

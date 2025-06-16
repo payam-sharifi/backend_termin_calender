@@ -7,9 +7,13 @@ import { ScheduleModule } from "../schedule/schedule.module";
 import { AppointmentModule } from "src/appointment/appointment.module";
 import { TimeSlotModule } from "src/time-slot/timeslot.module";
 import { AuthModule } from "src/auth/auth.module";
-
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [UserModule, ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
+    UserModule, ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
