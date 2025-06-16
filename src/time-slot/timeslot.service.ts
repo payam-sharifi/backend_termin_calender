@@ -2,17 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { TimeSlotEnum } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
-import { getTimeSlotsDto } from "./Dtos/timeslot.dtos";
+import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 
 @Injectable()
 export class TimeSlotService {
   constructor(private readonly prisma: PrismaService) {}
-  async getAvailableTimeSlot(body: getTimeSlotsDto) {
+  async getAvailableTimeSlot(body: GetTimeslotDto) {
     return this.prisma.timeSlot.findMany({
       relationLoadStrategy: "join",
       where: {
         //  user_Id:body.user_Id,
-        service_id: body.service_Id,
+        service_id: body.service_id,
         start_time: new Date(body.start_time),
         end_time: new Date(body.end_time),
       },
@@ -24,15 +24,18 @@ export class TimeSlotService {
   }
 
   async createTimeSlots(body: CreateTimeSlotDto) {
-     const slot=await this.prisma.timeSlot.create({
-      data: {
-        start_time: body.start_time,
-        end_time: body.end_time,
-        service_id: body.service_id,
-        status: body.status,
-      },
-      
-    });
-    return slot
+    try {
+      const slot = await this.prisma.timeSlot.create({
+        data: {
+          start_time: body.start_time,
+          end_time: body.end_time,
+          service_id: body.service_id,
+          status: TimeSlotEnum.Available ,
+        },
+      });
+      return slot;
+    } catch (error) {
+      throw error;
+    }
   }
 }

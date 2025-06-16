@@ -1,24 +1,39 @@
-
 import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class UpdateServiceDto {
-   
-  @IsNumber()
-  provider_id:string // ForeignKey to User (Provider)
+  @ApiPropertyOptional({ example: "provider-uuid-123", description: "شناسه ارائه‌دهنده سرویس" })
+  @IsOptional()
   @IsString()
-  title: string; 
+  provider_id: string; // ForeignKey to User (Provider)
 
+  @ApiPropertyOptional({ example: "خدمات نظافت", description: "عنوان سرویس" })
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @ApiPropertyOptional({ example: 30, description: "مدت زمان سرویس به دقیقه" })
+  @IsOptional()
   @IsNumber()
-  duration: number; // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
-  
+  duration?: number;
+
+  @ApiPropertyOptional({ example: 250, description: "قیمت سرویس (اختیاری)" })
   @IsOptional()
   @IsNumber()
   price?: number;
 
+  @ApiPropertyOptional({ example: "توضیحات اضافی درباره سرویس", description: "توضیحات سرویس (اختیاری)" })
   @IsOptional()
   @IsString()
-  description: string;
-  
+  description?: string;
+
+  @ApiPropertyOptional({ example: "#C9D1AC", description: "رنگ سرویس" })
+  @IsOptional()
+  @IsString()
+  color?: string;
+
+  @ApiPropertyOptional({ example: true, description: "وضعیت فعال بودن سرویس" })
+  @IsOptional()
   @IsBoolean()
-  is_active: boolean;
+  is_active?: boolean;
 }

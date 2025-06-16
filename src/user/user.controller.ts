@@ -8,16 +8,20 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto, UpdateUserDto } from "./Dtos";
+
 
 @Controller("/user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //GetUserById
+
   @Get("/:id")
+
   async getUser(@Param("id") id: string) {
     try {
       const user = await this.userService.GetOneUserById(id);
@@ -32,6 +36,7 @@ export class UserController {
 
   //GetAllUsers
   @Get()
+
   async getAllUser() {
     const user = await this.userService.GetAllUsers();
     if (!user) {

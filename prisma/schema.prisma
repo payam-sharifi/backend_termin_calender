@@ -74,7 +74,7 @@ model Service {
   title       String // مثال: "کوتاهی مو"، "معاینه پزشکی"
   duration    Int // مدت زمان سرویس به دقیقه (مثلا 30 دقیقه)
   price       Float // قیمت (اختیاری)
-  color       String @default("#5293e3")
+  color       String   
   description String
   timeSlots    TimeSlot[]
   is_active   Boolean

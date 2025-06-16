@@ -6,9 +6,10 @@ import { ServiceModule } from "../service/service.module";
 import { ScheduleModule } from "../schedule/schedule.module";
 import { AppointmentModule } from "src/appointment/appointment.module";
 import { TimeSlotModule } from "src/time-slot/timeslot.module";
+import { AuthModule } from "src/auth/auth.module";
 
 @Module({
-  imports: [UserModule, ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule],
+  imports: [UserModule, ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
