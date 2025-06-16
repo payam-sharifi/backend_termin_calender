@@ -56,10 +56,7 @@ export class ServiceController {
         data: [],
       };
     }
-    return {
-      message: "Services retrieved successfully",
-      data: services,
-    };
+    return services
   }
 
   @Post()

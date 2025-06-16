@@ -34,6 +34,7 @@ export class AuthService {
       },
       select: {
         name: true,
+        phone:true,
         email: true,
       },
     });
