@@ -26,12 +26,16 @@ import {
 } from "@nestjs/swagger";
 import { UpdateAuthDto } from "./Dtos/UpdateAuthDto";
 import { ApiResponseType } from "src/common/response.interface";
+import { OtpService } from "src/otp/otp.service";
+import { PrismaService } from "prisma/prisma.service";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly otpService: OtpService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Post("/register")
@@ -39,8 +43,37 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: "User created successfully" })
   async register(@Body() body: CreateUserDto) {
-    const user = await this.authService.create(body);
-    return user;
+    const valid = await this.otpService.verifyOtp(body.phone, body.code);
+    if (valid) {
+      const user = await this.prisma.user.findUnique({
+        where: { phone: body.phone },
+      });
+      if (!user) {
+        const user = await this.authService.create(body);
+        // await this.prisma.user.create({
+        //   data: {
+        //     phone: body.phone,
+        //     name: '',
+        //     family: '',
+        //     email: `${body.phone}@example.com`,
+        //     sex: 'male',
+        //     password: '', // چون لاگین با OTP هست، می‌تونه خالی بمونه یا رمز تصادفی بزنی
+        //     is_verified: true,
+        //   },
+        // });
+        return { message: "Fehler bei der Anmeldung" };
+       
+      }
+
+      return { message: "Benutzer existiert bereits" };
+    }
+    return { message: "Anmeldung erfolgreich" };
+  }
+ 
+  @Post("send-otp")
+
+  async sendOtp(@Body("phone") phone: string) {
+    return this.otpService.sendOtp(phone);
   }
 
   @Post("/login")
@@ -48,12 +81,17 @@ export class AuthController {
   @ApiOperation({ summary: "Login and get JWT token" })
   //@ApiBody({ type: {} })
   @ApiResponse({ status: 200, description: "Successful login" })
-  async login(@Request() req: any): Promise<ApiResponseType>  {
+  async login(@Request() req: any): Promise<ApiResponseType> {
+    
     const user = req.user;
-    const token= this.jwtService.sign({ id: user.id, phone: user.phone,role:user.role,email:user.mail });
+    const token = this.jwtService.sign({
+      id: user.id,
+      phone: user.phone,
+      role: user.role,
+      email: user.mail,
+    });
     if (!token) throw new NotFoundException("Fehler bei der Anmeldung");
     return { success: true, data: token, message: "Anmeldung erfolgreich" };
-    
   }
 
   @UseGuards(JwtAuthGaurd)

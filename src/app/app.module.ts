@@ -11,12 +11,13 @@ import { ConfigModule } from '@nestjs/config';
 import { SmsModule } from "src/sms/sms.module";
 import { ScheduleModule } from '@nestjs/schedule';
 import { ReminderModule } from "src/reminder/reminder.module";
+import { OtpModule } from "src/otp/otp.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    UserModule, ReminderModule,ScheduleModule.forRoot(),ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule,SmsModule],
+    UserModule,OtpModule, ReminderModule,ScheduleModule.forRoot(),ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule,SmsModule],
   controllers: [AppController],
   providers: [AppService],
 })
