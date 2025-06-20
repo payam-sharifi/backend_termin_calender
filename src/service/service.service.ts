@@ -41,7 +41,7 @@ export class ServiceService {
 
   //getAllServices without Slots
   async getAllServices() {
-    return  this.prisma.service.findMany({
+    return this.prisma.service.findMany({
       // relationLoadStrategy: "join",
       // include: {
       //   timeSlots: true,
@@ -49,7 +49,7 @@ export class ServiceService {
     });
   }
 
-   //getAllServices with Slots
+  //getAllServices with Slots
   async getAllServicesWithProviderId(body: GetServiceDto) {
     const startDateTime = new Date(`${body.start_time}T00:00:00.000Z`);
     const endDateTime = new Date(new Date(body.end_time));
@@ -67,6 +67,19 @@ export class ServiceService {
             },
             end_time: {
               lte: endDateTime, //new Date(end_date),
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                family: true,
+                email: true,
+                phone: true,
+                sex: true,
+                is_verified: true,
+              },
             },
           },
         },
@@ -96,11 +109,11 @@ export class ServiceService {
       });
     } catch (error: any) {
       if (error.code === "P2025") {
-        throw new NotFoundException("Service not found or already deleted.");
+        throw new NotFoundException(
+          "Dienst nicht gefunden oder bereits gelöscht."
+        );
       }
       throw error;
     }
   }
-
- 
 }

@@ -40,7 +40,7 @@ export class ServiceController {
     const createdService = await this.service.create(body);
     return {
       success: true,
-      message: 'Service has been created',
+      message: 'Dienst wurde erstellt',
       data: createdService,
     };
   }
@@ -80,12 +80,12 @@ export class ServiceController {
       const updated = await this.service.updateWithProviderId(id, body);
       return {
         success: true,
-        message: 'Service successfully updated',
+        message: 'Dienst erfolgreich aktualisiert',
         data: updated,
       };
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException('Service not found or already deleted.');
+        throw new NotFoundException('Dienst nicht gefunden oder bereits gelöscht.');
       }
       throw error;
     }
@@ -93,13 +93,13 @@ export class ServiceController {
 
   @Delete(":id")
   @ApiOperation({ summary: 'Delete a service by ID' })
-  @ApiOkResponse({ description: 'Service successfully deleted.' })
+  @ApiOkResponse({ description: 'Dienst erfolgreich gelöscht.' })
   @ApiNotFoundResponse({ description: 'Service not found or already deleted.' })
   async deleteServiceById(@Param("id") id: string) {
     const deletedService = await this.service.deleteServiceById(id);
     return {
       success: true,
-      message: "Service successfully deleted.",
+      message: "Dienst erfolgreich gelöscht.",
       data: deletedService,
     };
   }

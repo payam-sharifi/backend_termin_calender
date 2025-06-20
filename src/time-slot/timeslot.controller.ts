@@ -24,7 +24,7 @@ export class TimeSlotController {
   @Post()
   @ApiOperation({ summary: "Create new time slots" })
   @ApiBody({ type: CreateTimeSlotDto })
-  @ApiResponse({ status: 201, description: "Time slot created successfully." })
+  @ApiResponse({ status: 201, description: "Zeitfenster erfolgreich erstellt" })
   @ApiResponse({ status: 400, description: "Bad Request: Request body is empty." })
   @ApiResponse({ status: 500, description: "Internal Server Error" })
   async createTimeSlots(@Body() body: CreateTimeSlotDto) {
@@ -38,7 +38,7 @@ export class TimeSlotController {
       const res = await this.timeSlot.createTimeSlots(body);
       return {
         statusCode: HttpStatus.CREATED,
-        message: "Time slot created successfully",
+        message: "Zeitfenster erfolgreich erstellt",
         data: res,
       };
     } catch (error) {
@@ -46,7 +46,7 @@ export class TimeSlotController {
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: "Failed to create time slot",
+          message: "Zeitfenster konnte nicht erstellt werden",
           error: error?.message || error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR

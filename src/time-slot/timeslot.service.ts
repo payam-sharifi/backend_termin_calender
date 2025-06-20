@@ -28,7 +28,7 @@ export class TimeSlotService {
 
   async createTimeSlots(body: CreateTimeSlotDto) {
     try {
-      var costumerId=""
+      var costumerId = "";
       if (!body.customer_id) {
         const customer = await this.prisma.user.create({
           data: {
@@ -41,7 +41,7 @@ export class TimeSlotService {
             is_verified: true,
           },
         });
-        costumerId=customer.id
+        costumerId = customer.id;
       }
       const slot = await this.prisma.timeSlot.create({
         data: {
@@ -49,12 +49,12 @@ export class TimeSlotService {
           end_time: body.end_time,
           service_id: body.service_id,
           status: TimeSlotEnum.Available,
-          customer_id: costumerId || body.customer_id,
+          customer_id: costumerId != "" ? costumerId : body.customer_id,
           desc: body.desc || "",
         },
       });
       const smsToCustomer = await this.prisma.user.findUnique({
-        where: { id:costumerId || body.customer_id},
+        where: { id: costumerId || body.customer_id },
       });
 
       if (smsToCustomer?.phone) {
