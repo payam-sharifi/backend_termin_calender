@@ -2,7 +2,7 @@ import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString, Length } from "cl
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Sex, RoleEnum } from "@prisma/client";
 
-export class UpdateUserDto {
+export class UpdateAuthDto {
   @IsOptional()
   @IsString({ message: 'Der Vorname muss eine Zeichenkette sein.' })
   @ApiPropertyOptional({ example: "Ali" })

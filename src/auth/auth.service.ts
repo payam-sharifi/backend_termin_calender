@@ -7,7 +7,7 @@ import {
 import { PrismaService } from "prisma/prisma.service";
 import { CreateUserDto } from "src/user/Dtos";
 import * as bcrypt from "bcrypt";
-import { UpdateUserDto } from "./Dtos/UpdateUserDto";
+import { UpdateAuthDto } from "./Dtos/UpdateAuthDto";
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
@@ -56,7 +56,7 @@ export class AuthService {
   }
 
  // 🔁 بروزرسانی کاربر
- async updateUser(id: string, body: UpdateUserDto) {
+ async updateUser(id: string, body: UpdateAuthDto) {
   try {
     const updated = await this.prisma.user.update({
       where: { id },
@@ -84,7 +84,7 @@ export class AuthService {
   }
 }
 
-// ❌ حذف کاربر
+// حذف کاربر
 async deleteUser(id: string) {
   try {
     const deleted = await this.prisma.user.delete({

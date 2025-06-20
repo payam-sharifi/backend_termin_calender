@@ -59,6 +59,7 @@ model User {
   created_at           DateTime      @default(now())
   updated_at           DateTime      @updatedAt
   service              Service[]
+  timeslot              TimeSlot[]
   schedule             Schedule[]
   CustomerAppointments Appointment[] @relation("CustomerAppointments")
   ProviderAppointments Appointment[] @relation("ProviderAppointments")
@@ -97,12 +98,15 @@ model Schedule {
 model TimeSlot {
   id          String           @id @default(uuid())
   //schedule    Schedule      @relation(fields: [schedule_id], references: [id])
-  service    Service      @relation(fields: [service_id], references: [id])
-    service_id  String // # ForeignKey to User
- // schedule_id String //# ForeignKey to Schedule
+ service    Service      @relation(fields: [service_id], references: [id])
+  service_id  String // # ForeignKey to User
+   // schedule_id String //# ForeignKey to Schedule
   start_time  DateTime // # مثال: 2025-06-10 14:00
   end_time    DateTime // # مثال: 2025-06-10 14:30
   status      TimeSlotEnum
+  user        User? @relation(fields: [customer_id], references: [id])
+  customer_id        String?
+  desc String
   Appointment Appointment[]
 }
 

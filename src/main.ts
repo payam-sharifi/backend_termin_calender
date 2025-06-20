@@ -3,9 +3,11 @@ import { AppModule } from "./app/app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { AllExceptionsFilter } from "./common/all-exceptions.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new AllExceptionsFilter());
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();

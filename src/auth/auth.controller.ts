@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -23,7 +24,8 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { UpdateUserDto } from "./Dtos/UpdateUserDto";
+import { UpdateAuthDto } from "./Dtos/UpdateAuthDto";
+import { ApiResponseType } from "src/common/response.interface";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
@@ -46,16 +48,12 @@ export class AuthController {
   @ApiOperation({ summary: "Login and get JWT token" })
   //@ApiBody({ type: {} })
   @ApiResponse({ status: 200, description: "Successful login" })
-  async login(@Request() req: any) {
+  async login(@Request() req: any): Promise<ApiResponseType>  {
     const user = req.user;
-    const token = this.jwtService.sign({ id: user.id, phone: user.phone });
-
-    return {
-      success: true,
-      message: "Login successful",
-      token,
-      user,
-    };
+    const token= this.jwtService.sign({ id: user.id, phone: user.phone,role:user.role,email:user.mail });
+    if (!token) throw new NotFoundException("Fehler bei der Anmeldung");
+    return { success: true, data: token, message: "Anmeldung erfolgreich" };
+    
   }
 
   @UseGuards(JwtAuthGaurd)
@@ -70,8 +68,8 @@ export class AuthController {
   @UseGuards(JwtAuthGaurd)
   @ApiBearerAuth()
   @Put("update/:id")
-  @ApiBody({ type: UpdateUserDto })
-  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
+  @ApiBody({ type: UpdateAuthDto })
+  async updateUser(@Param("id") id: string, @Body() body: UpdateAuthDto) {
     return this.authService.updateUser(id, body);
   }
 

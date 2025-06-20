@@ -65,14 +65,14 @@ export class ScheduleService {
       while (currentTime < schedule.end_time) {
         const endTime = new Date(currentTime.getTime() + 90 * 60000); // 90 دقیقه
 
-        await this.prisma.timeSlot.create({
-          data: {
-            start_time: currentTime,
-            end_time: endTime,
-            service_id: schedule.id,
-            status: "Available",
-          },
-        });
+        // await this.prisma.timeSlot.create({
+        //   data: {
+        //     start_time: currentTime,
+        //     end_time: endTime,
+        //     service_id: schedule.id,
+        //     status: "Available",
+        //   },
+        // });
 
         currentTime = endTime;
       }

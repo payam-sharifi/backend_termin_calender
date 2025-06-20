@@ -24,6 +24,7 @@ export class TimeSlotService {
   }
 
   async createTimeSlots(body: CreateTimeSlotDto) {
+   
     try {
       const slot = await this.prisma.timeSlot.create({
         data: {
@@ -31,9 +32,24 @@ export class TimeSlotService {
           end_time: body.end_time,
           service_id: body.service_id,
           status: TimeSlotEnum.Available ,
+          customer_id:body.customer_id,
+          desc:body.desc || "",
+          
         },
       });
-      return slot;
+      // const customer = await this.prisma.user.create({
+      //   data: {
+      //     name:body.name,
+      //     family:body.family,
+      //     phone:body.family,
+      //     email:body.email,
+      //     sex:body.sex,
+      //     password:"",
+      //     is_verified:body.is_verified!
+      //   },
+      // });
+
+      return {slot};
     } catch (error) {
       throw error;
     }

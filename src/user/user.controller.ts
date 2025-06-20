@@ -1,3 +1,4 @@
+// user.controller.ts
 import {
   Body,
   Controller,
@@ -8,67 +9,74 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  UseGuards,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto, UpdateUserDto } from "./Dtos";
+import { RoleEnum } from "@prisma/client";
+import { ApiResponseType } from "../common/response.interface"
+import { ApiTags, ApiQuery, ApiResponse as SwaggerResponse } from "@nestjs/swagger";
 
-
+@ApiTags("Users")
 @Controller("/user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  //GetUserById
-
   @Get("/:id")
-
-  async getUser(@Param("id") id: string) {
-    try {
-      const user = await this.userService.GetOneUserById(id);
-      if (!user) {
-        throw new NotFoundException("User Not Found");
-      }
-      return user;
-    } catch (error) {
-      console.log(error);
-    }
+  async getUser(@Param("id") id: string): Promise<ApiResponseType> {
+    const user = await this.userService.GetOneUserById(id);
+    if (!user) throw new NotFoundException("User Not Found");
+    return { success: true, data: user };
   }
 
-  //GetAllUsers
   @Get()
+  @ApiQuery({ name: "role", required: false })
+  @ApiQuery({ name: "page", required: false })
+  @ApiQuery({ name: "limit", required: false })
+  async getAllUser(
+    @Query("role") role?: string,
+    @Query("page") page = 1,
+    @Query("limit") limit = 10
+  ): Promise<ApiResponseType> {
+    let validRole: RoleEnum | undefined;
 
-  async getAllUser() {
-    const user = await this.userService.GetAllUsers();
-    if (!user) {
-      throw new NotFoundException("User Not Found");
+    if (role && Object.values(RoleEnum).includes(role as RoleEnum)) {
+      validRole = role as RoleEnum;
     }
-    return user;
+
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const pageSize = Math.max(Number(limit) || 10, 1);
+    const skip = (pageNumber - 1) * pageSize;
+
+    const result = await this.userService.GetAllUsers(validRole, skip, pageSize);
+
+    return {
+      success: true,
+      data: result.data,
+      message: `Fetched ${result.data.length} user(s).`,
+    };
   }
 
   @Post()
-  async createUser(@Body() body: CreateUserDto) {
+  async createUser(@Body() body: CreateUserDto): Promise<ApiResponseType> {
     const user = await this.userService.create(body);
-    return user;
+    return { success: true, data: user, message: "User created successfully." };
   }
 
   @Put("/:id")
   async updateUser(
     @Body() body: UpdateUserDto,
-    @Param("id", ParseIntPipe) id: string
-  ) {
+    @Param("id") id: string
+  ): Promise<ApiResponseType> {
     const updatedUser = await this.userService.updateUserById(body, id);
-    if (!updatedUser) {
-      throw new NotFoundException("User Not Found");
-    }
-    return updatedUser;
+    if (!updatedUser) throw new NotFoundException("User Not Found");
+    return { success: true, data: updatedUser, message: "User updated successfully." };
   }
 
   @Delete("/:id")
-  async deleteUser(@Param("id") id: string) {
+  async deleteUser(@Param("id") id: string): Promise<ApiResponseType> {
     const deletedUser = await this.userService.deleteUserById(id);
-    if (!deletedUser) {
-      throw new NotFoundException("User Not Found Or ");
-    }
-    return "user Deleted";
+    if (!deletedUser) throw new NotFoundException("User Not Found");
+    return { success: true, message: "User deleted successfully." };
   }
 }

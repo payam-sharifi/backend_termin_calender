@@ -27,11 +27,13 @@ export class CreateUserDto {
   phone: string;
 
   @ApiProperty({ example: "male" })
+  @IsOptional()
   @IsString({ message: 'Das Geschlecht muss ein TEXT sein.' })
   sex: Sex;
 
   @ApiProperty({ example: "password123" })
-  @IsString({ message: 'Das Passwort muss ein Text sein.' })
+  @IsOptional()
+  @IsString()
   @Length(5, 12, {
     message: 'Das Passwort muss zwischen 5 und 12 Zeichen lang sein.',
   })
@@ -45,5 +47,5 @@ export class CreateUserDto {
   @ApiProperty({ example: true })
   @IsOptional()
   @IsBoolean({ message: 'Der Wert muss ein Wahrheitswert (true oder false) sein.' })
-  is_verified: boolean;
+  is_verified: true;
 }
