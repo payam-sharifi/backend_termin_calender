@@ -26,29 +26,28 @@ export class TimeSlotService {
   async createTimeSlots(body: CreateTimeSlotDto) {
    
     try {
+     const customer = await this.prisma.user.create({
+        data: {
+          name:body.name,
+          family:body.family,
+          phone:body.phone,
+          email:body.email,
+          sex:body.sex,
+          password:"",
+          is_verified:true
+        },
+      });
       const slot = await this.prisma.timeSlot.create({
         data: {
           start_time: body.start_time,
           end_time: body.end_time,
           service_id: body.service_id,
           status: TimeSlotEnum.Available ,
-          customer_id:body.customer_id,
+          customer_id:customer.id,
           desc:body.desc || "",
           
         },
       });
-      // const customer = await this.prisma.user.create({
-      //   data: {
-      //     name:body.name,
-      //     family:body.family,
-      //     phone:body.family,
-      //     email:body.email,
-      //     sex:body.sex,
-      //     password:"",
-      //     is_verified:body.is_verified!
-      //   },
-      // });
-
       return {slot};
     } catch (error) {
       throw error;

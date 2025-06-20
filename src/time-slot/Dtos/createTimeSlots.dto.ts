@@ -19,7 +19,7 @@ export class CreateTimeSlotDto {
   @ApiPropertyOptional({ description: 'Optional customer_id', type: String })
   @IsOptional()
   @IsString()
-  customer_id?: string;
+  customer_id: string;
 
 
 

@@ -104,8 +104,8 @@ model TimeSlot {
   start_time  DateTime // # مثال: 2025-06-10 14:00
   end_time    DateTime // # مثال: 2025-06-10 14:30
   status      TimeSlotEnum
-  user        User? @relation(fields: [customer_id], references: [id])
-  customer_id        String?
+  user        User @relation(fields: [customer_id], references: [id])
+  customer_id        String
   desc String
   Appointment Appointment[]
 }
