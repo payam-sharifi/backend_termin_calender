@@ -10,6 +10,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
+  
   app.enableCors();
 
   const config = new DocumentBuilder()
