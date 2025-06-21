@@ -14,7 +14,8 @@ jobs:
           host:  ${{ secrets.SERVER_HOST }} 
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-        
+        port: 22 
+        script_timeout: 5m
           script: |
             cd /termin/backend_termin_calender
             git pull origin main
