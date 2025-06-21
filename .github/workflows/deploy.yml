@@ -8,6 +8,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Add to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
       - name: Execute SSH command
         uses: appleboy/ssh-action@master
         with:
@@ -15,7 +20,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          script_timeout: 2m
+          timeout: 2m  # Correct parameter name
           script: |
             cd /termin/backend_termin_calender
             git pull origin main
