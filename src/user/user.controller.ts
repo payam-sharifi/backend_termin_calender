@@ -26,14 +26,16 @@ export class UserController {
   async getUser(@Param("id") id: string): Promise<ApiResponseType> {
     const user = await this.userService.GetOneUserById(id);
     if (!user) throw new NotFoundException("User Not Found");
-    return { success: true, data: user };
+    return { success: true, data: user , message: "",};
   }
 
   @Get()
+  @ApiQuery({ name: "search", required: false })
   @ApiQuery({ name: "role", required: false })
   @ApiQuery({ name: "page", required: false })
   @ApiQuery({ name: "limit", required: false })
   async getAllUser(
+    @Query("search") search?: string,
     @Query("role") role?: string,
     @Query("page") page = 1,
     @Query("limit") limit = 10
@@ -48,7 +50,7 @@ export class UserController {
     const pageSize = Math.max(Number(limit) || 10, 1);
     const skip = (pageNumber - 1) * pageSize;
 
-    const result = await this.userService.GetAllUsers(validRole, skip, pageSize);
+    const result = await this.userService.GetAllUsers(validRole, search, skip, pageSize);
 
     return {
       success: true,
@@ -60,7 +62,8 @@ export class UserController {
   @Post()
   async createUser(@Body() body: CreateUserDto): Promise<ApiResponseType> {
     const user = await this.userService.create(body);
-    return { success: true, data: user, message: "User created successfully." };
+    console.log(user,"error")
+    return { success: true, data: user, message: "Benutzer erfolgreich erstellt." };
   }
 
   @Put("/:id")
@@ -69,14 +72,15 @@ export class UserController {
     @Param("id") id: string
   ): Promise<ApiResponseType> {
     const updatedUser = await this.userService.updateUserById(body, id);
-    if (!updatedUser) throw new NotFoundException("User Not Found");
-    return { success: true, data: updatedUser, message: "User updated successfully." };
+    if (!updatedUser) throw new NotFoundException("Benutzer nicht gefunden");
+    return { success: true, data: updatedUser, message: "Benutzer erfolgreich aktualisiert." };
   }
 
   @Delete("/:id")
   async deleteUser(@Param("id") id: string): Promise<ApiResponseType> {
+    console.log(id)
     const deletedUser = await this.userService.deleteUserById(id);
-    if (!deletedUser) throw new NotFoundException("User Not Found");
-    return { success: true, message: "User deleted successfully." };
+    if (!deletedUser) throw new NotFoundException("Benutzer nicht gefunden");
+    return { success: true, message: "Benutzer erfolgreich gelöscht." };
   }
 }

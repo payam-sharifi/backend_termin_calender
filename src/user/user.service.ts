@@ -27,15 +27,27 @@ export class UserService {
     if (existingUser) {
       throw new ConflictException("User already exists with given email or phone.");
     }
-
+    
     const user = await this.prisma.user.create({ data: dto });
     return user;
   }
 
   // ✅ Get all users with pagination
-  async GetAllUsers(role?: RoleEnum, skip = 0, take = 10) {
-    const whereClause = role ? { role } : {};
-
+  async GetAllUsers(role?: RoleEnum, search?: string, skip = 0, take = 10) {
+    const whereClause: any = {};
+  
+    if (role) {
+      whereClause.role = role;
+    }
+  
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
+      ];
+    }
+  
     const [users, total] = await this.prisma.$transaction([
       this.prisma.user.findMany({
         relationLoadStrategy: "join",
@@ -48,7 +60,7 @@ export class UserService {
       }),
       this.prisma.user.count({ where: whereClause }),
     ]);
-
+  
     return {
       data: users,
       total,
@@ -57,6 +69,7 @@ export class UserService {
       totalPages: Math.ceil(total / take),
     };
   }
+  
 
   //  Get one or multiple users by optional filters
   async GetOneUsers(filters: FindUserDto) {
@@ -78,22 +91,16 @@ export class UserService {
   // Get user by ID with full related data
   async GetOneUserById(id: string) {
     const user = await this.prisma.user.findUnique({
-      relationLoadStrategy: "join",
+     // relationLoadStrategy: "join",
       where: { id },
-      include: {
-        service: {
-          where: { provider_id: id },
-          include: {
-            timeSlots: true,
-          },
-        },
-        CustomerAppointments: {
-          where: { customer_id: id },
-        },
-        ProviderAppointments: {
-          where: { provider_id: id },
-        },
-      },
+      // include: {
+      //   service: {
+      //     where: { provider_id: id },
+      //     include: {
+      //       timeSlots:{include:{user:true}},
+      //     },
+      //   },
+      // },
     });
 
     if (!user) {
