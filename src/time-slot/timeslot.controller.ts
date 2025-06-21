@@ -1,17 +1,22 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
+  Param,
   Post,
+  Put,
   Query,
 } from "@nestjs/common";
 import { TimeSlotService } from "./timeslot.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 
-import { ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
+import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
 
 @Controller("timeslot")
 export class TimeSlotController {
@@ -52,5 +57,42 @@ export class TimeSlotController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: "update time of event" })
+  @ApiBody({ type: UpdateTimeSlotDto })
+  @ApiResponse({ status: 201, description: "Zeitfenster erfolgreich erstellt" })
+  @ApiResponse({ status: 400, description: "Bad Request: Request body is empty." })
+  @ApiResponse({ status: 500, description: "Internal Server Error" })
+  async updateTimeSlotsTimeById( @Param('id') id: string,@Body() body: UpdateTimeSlotDto,){
+    try {
+      const updated = await this.timeSlot.updateTimeSlotsTimeById(id, body);
+      return {
+        success: true,
+        message: 'Dienst erfolgreich aktualisiert',
+        data: updated,
+      };
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('Dienst nicht gefunden oder bereits gelöscht.');
+      }
+      throw error;
+    }
+  }
+
+
+
+  @Delete(":id")
+  @ApiOperation({ summary: 'Delete a service by ID' })
+  @ApiOkResponse({ description: 'Dienst erfolgreich gelöscht.' })
+  @ApiNotFoundResponse({ description: 'Event not found or already deleted.' })
+  async deleteServiceById(@Param("id") id: string) {
+    const deletedTimeSlot = await this.timeSlot.deleteTimeSlotsById(id);
+    return {
+      success: true,
+      message: "Dienst erfolgreich gelöscht.",
+      data: deletedTimeSlot,
+    };
   }
 }

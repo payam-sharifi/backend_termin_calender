@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { TimeSlotEnum } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 import { SmsService } from "../sms/sms.service";
+import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
 @Injectable()
 export class TimeSlotService {
   constructor(
@@ -66,4 +67,31 @@ export class TimeSlotService {
       throw error;
     }
   }
+
+
+  async updateTimeSlotsTimeById(id: string, dataRq: UpdateTimeSlotDto) {
+    return await this.prisma.timeSlot.update({
+      where: { id },
+      data: {
+          start_time:dataRq.start_time,
+          end_time:dataRq.end_time
+      },
+    });
+  }
+  async deleteTimeSlotsById(id: string) {
+    try {
+      return await this.prisma.timeSlot.delete({
+        where: { id },
+      });
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        throw new NotFoundException(
+          "Dienst nicht gefunden oder bereits gelöscht."
+        );
+      }
+      throw error;
+    }
+  }
+
+
 }
