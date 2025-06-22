@@ -47,29 +47,34 @@ export class AuthService {
 
   async signIn(phone: string, password?: string, code?: string): Promise<any> {
     //if user exist
+    console.log("phone:",phone)
+    console.log("password:",password)
+    console.log("code",code)
     const user = await this.prisma.user.findUnique({ where: { phone } });
     if (!user) throw new UnauthorizedException("Benutzer nicht gefunden");
 
     //with code
     if (code && !password) {
       const valid = await this.otpService.verifyOtp(phone, code);
-      if (valid) {
-        //if code is correct
-        return user;
-      } else {
-        //if code is incorrect
-        throw new UnauthorizedException("Code ist falsch");
+      if (!valid) {
+          throw new UnauthorizedException("Code ist falsch");
       }
-    } 
+      const { password: _, ...result } = user;
+      return result;
+  }
     
-      //with password
-      if (!code && password) {
-        const passwordValid = await bcrypt.compare(password, user.password);
-        if (!passwordValid)
-          throw new UnauthorizedException("Falsches Passwort");
-        const { password: _, ...result } = user;
-        return result;
-      }
+  else if (password && !code) {
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) {
+        throw new UnauthorizedException("Falsches Passwort");
+    }
+    const { password: _, ...result } = user;
+    return result;
+}
+// Neither method provided
+else {
+    throw new UnauthorizedException("Entweder Passwort oder Code ist erforderlich");
+}
     
      
   }

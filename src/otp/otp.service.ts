@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 //import { sendSMS } from "../reminder/sms.helper";
 import { Cron } from "@nestjs/schedule";
 import { SmsService } from "src/sms/sms.service";
-
+import * as crypto from 'crypto';
 @Injectable()
 export class OtpService {
   constructor(private prisma: PrismaService,private sendSMS:SmsService) {}
@@ -24,26 +24,31 @@ export class OtpService {
     return { message:"Code gesendet"};
   }
 
-  async verifyOtp(phone: string, code: string) {
+  async verifyOtp(phone: string, inputCode: string) {
+    console.log("verifyOtp run")
     const record = await this.prisma.otp.findFirst({
       where: {
         phone,
-        code,
-        expiresAt: {
-          gte: new Date(),
-        },
+        
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+    
     });
-
+      console.log(record,"record")
     if (!record) {
-      throw new Error("Der Code ist ungültig oder abgelaufen.");
+      throw new BadRequestException("Code ist ungültig oder abgelaufen.");
     }
-
+  
+    const isMatch =
+      record.code.length === inputCode.length &&
+      crypto.timingSafeEqual(Buffer.from(record.code), Buffer.from(inputCode));
+        console.log(isMatch,"isMatch")
+    if (!isMatch) {
+      throw new BadRequestException("Code ist ungültig.");
+    }
+  
     return true;
   }
+  
 
   @Cron("*/2 * * * *") // هر ساعت در دقیقه 0 اجرا می‌شود
   async cleanExpiredOtps() {
