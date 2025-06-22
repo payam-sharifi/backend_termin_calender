@@ -10,7 +10,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter";
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,{ cors: true });
   app.useGlobalFilters(new AllExceptionsFilter());
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
