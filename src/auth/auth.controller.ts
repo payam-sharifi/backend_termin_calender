@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   NotFoundException,
   Param,
   Post,
@@ -63,11 +64,13 @@ export class AuthController {
   async sendOtp(@Body("phone") phone: string) {
     return this.otpService.sendOtp(phone);
   }
-
   @Post("/login")
   @UseGuards(AuthGuard("local"))
+  @Header('Access-Control-Allow-Origin', 'https://termin.appventuregmbh.com')
+  @Header('Access-Control-Expose-Headers', 'Authorization, Content-Type')
+  @Header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   @ApiOperation({ summary: "Login and get JWT token" })
-  //@ApiBody({ type: {} })
   @ApiResponse({ status: 200, description: "Successful login" })
   async login(@Request() req: any): Promise<ApiResponseType> {
     
