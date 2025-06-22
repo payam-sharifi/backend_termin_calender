@@ -17,7 +17,7 @@ import { OtpModule } from "src/otp/otp.module";
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    UserModule,OtpModule, ReminderModule,ScheduleModule.forRoot(),ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule,SmsModule],
+    UserModule,OtpModule, ReminderModule,ScheduleModule.forRoot(),ServiceModule, ScheduleModule,AppointmentModule,TimeSlotModule,AuthModule,SmsModule,OtpModule],
   controllers: [AppController],
   providers: [AppService],
 })

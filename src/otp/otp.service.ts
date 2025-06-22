@@ -49,6 +49,12 @@ export class OtpService {
     return true;
   }
   
+  async saveOtp(phone: string, code: string){
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); 
+    return await this.prisma.otp.create({
+      data: { phone, code, expiresAt},
+    });
+  }
 
   @Cron("*/2 * * * *") // هر ساعت در دقیقه 0 اجرا می‌شود
   async cleanExpiredOtps() {

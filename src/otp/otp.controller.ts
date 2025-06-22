@@ -26,7 +26,13 @@ export class OtpController {
     await this.otpService.sendOtp(phone);
     return { message: 'Der Bestätigungscode wurde erfolgreich gesendet.' };
   }
+  @Post('create')
+  @ApiBody({ type: VerifyOtpDto })
+  async saveOtp(@Body() {phone,code}:VerifyOtpDto){
   
+    return this.otpService.saveOtp(phone,code)
+  }
+
   @Post('verify')
   @ApiOperation({ summary: 'Überprüfe den Bestätigungscode' })
   @ApiBody({ type: VerifyOtpDto })
