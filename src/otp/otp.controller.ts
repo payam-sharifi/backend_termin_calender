@@ -18,6 +18,7 @@ class VerifyOtpDto {
 export class OtpController {
   constructor(private readonly otpService: OtpService) {}
 
+  
   @Post('send')
   @ApiOperation({ summary: 'Sende einen Bestätigungscode an die Telefonnummer' })
   @ApiBody({ type: SendOtpDto })
