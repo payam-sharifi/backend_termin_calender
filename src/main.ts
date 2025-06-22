@@ -17,7 +17,7 @@ async function bootstrap() {
   
   app.enableCors({
     origin: ['https://appventuregmbh.com', 'https://www.appventuregmbh.com'],
-    credentials: true,
+   
   });
   
 
