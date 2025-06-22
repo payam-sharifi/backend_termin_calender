@@ -20,10 +20,13 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          timeout: 2m  # Correct parameter name
+          timeout: 5m  # Correct parameter name
           script: |
             cd /termin/backend_termin_calender
-            git pull origin main
+            git pull
             npm install
             npm run build
-            pm2 restart nest-app
+            pm2 delete termin-back-app || true
+            pm2 start /termin/backend_termin_calender/dist/src/main.js --name "termin-back-app" --watch -- --port 4001
+            pm2 save
+            pm2 startup
