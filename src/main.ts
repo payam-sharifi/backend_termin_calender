@@ -15,7 +15,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   
-  app.enableCors();
+  app.enableCors({
+    origin: ['https://appventuregmbh.com', 'https://www.appventuregmbh.com'],
+    credentials: true,
+  });
+  
 
   const config = new DocumentBuilder()
     .setTitle("Reservation API")
