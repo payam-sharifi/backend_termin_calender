@@ -50,24 +50,12 @@ export class AuthController {
       });
       if (!user) {
         const user = await this.authService.create(body);
-        // await this.prisma.user.create({
-        //   data: {
-        //     phone: body.phone,
-        //     name: '',
-        //     family: '',
-        //     email: `${body.phone}@example.com`,
-        //     sex: 'male',
-        //     password: '', // چون لاگین با OTP هست، می‌تونه خالی بمونه یا رمز تصادفی بزنی
-        //     is_verified: true,
-        //   },
-        // });
-        return { message: "Fehler bei der Anmeldung" };
-       
+        return {success: true, data:user, message: "Anmeldung erfolgreich" };
       }
-
-      return { message: "Benutzer existiert bereits" };
+      return { success: false, data: null, message: "Benutzer existiert bereits"};
     }
-    return { message: "Anmeldung erfolgreich" };
+    return { success: false, data: null, message: "Der eingegebene Code ist falsch" };
+   
   }
  
   @Post("send-otp")

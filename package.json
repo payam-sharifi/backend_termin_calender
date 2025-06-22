@@ -39,6 +39,7 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "twilio": "^5.7.1",
     "yarn": "^1.22.22"
   },
   "devDependencies": {

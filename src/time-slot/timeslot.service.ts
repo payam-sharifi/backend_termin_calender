@@ -60,7 +60,7 @@ export class TimeSlotService {
 
       if (smsToCustomer?.phone) {
         const text = `Hallo ${smsToCustomer.name}, Ihr Termin wurde erstellt: ${slot.start_time.toLocaleString()}`;
-        await this.smsService.sendSMS("004917632136223", text);
+        await this.smsService.sendTwilioSms(smsToCustomer?.phone, text);
       }
       return { slot };
     } catch (error) {

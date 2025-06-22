@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
-import { sendSMS } from "../reminder/sms.helper";
+//import { sendSMS } from "../reminder/sms.helper";
 import { Cron } from "@nestjs/schedule";
+import { SmsService } from "src/sms/sms.service";
 
 @Injectable()
 export class OtpService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private sendSMS:SmsService) {}
 
   async sendOtp(phone: string) {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -15,10 +16,10 @@ export class OtpService {
       data: { phone, code, expiresAt },
     });
 
-    await sendSMS({
-      to: phone,
-      text: `Ihr Login-Code: ${code}`,
-    });
+    await this.sendSMS.sendTwilioSms(
+       phone,
+       `Ihr Login-Code: ${code}`,
+    );
 
     return { message:"Code gesendet"};
   }

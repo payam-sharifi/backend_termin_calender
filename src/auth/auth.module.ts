@@ -10,6 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OtpModule } from 'src/otp/otp.module';
 import { OtpService } from 'src/otp/otp.service';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Module({
   controllers: [AuthController],
@@ -17,6 +18,7 @@ import { OtpService } from 'src/otp/otp.service';
   imports: [
     PrismaModule,
     OtpModule,
+    SmsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule,
     JwtModule.registerAsync({

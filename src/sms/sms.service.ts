@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-
+import * as Twilio from 'twilio';
 @Injectable()
 export class SmsService {
+  private client: Twilio.Twilio;
+  constructor() { 
+    this.client = Twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN,
+    );
+  }
   private apiKey = process.env.SEVEN_API_KEY!;
   private sender = process.env.SEVEN_SENDER || 'TerminApp';
 
@@ -27,4 +34,17 @@ export class SmsService {
       throw new Error('SMS send failed');
     }
   }
-}
+
+   
+  
+   
+  
+    async sendTwilioSms(to: string, message: string): Promise<any> {
+      return await this.client.messages.create({
+        body: message,
+        from: process.env.TWILIO_PHONE_NUMBER, // شماره Twilio
+        to, // شماره مقصد با کد کشور (مثلاً: +491234567890)
+      });
+    }
+  }
+
