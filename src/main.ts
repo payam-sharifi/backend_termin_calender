@@ -19,7 +19,6 @@ async function bootstrap() {
     origin: ['https://appventuregmbh.com', 'https://www.appventuregmbh.com','https://termin.appventuregmbh.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
-    exposedHeaders: ['Authorization'] 
   });
   
 
