@@ -13,7 +13,7 @@ export class SmsService {
   private apiKey = process.env.SEVEN_API_KEY!;
   private sender = process.env.SEVEN_SENDER || 'TerminApp';
 
-  async sendSMS(to: string, text: string): Promise<void> {
+  async sendTwilioSms(to: string, text: string): Promise<void> {
     const url = 'https://gateway.seven.io/api/sms';
 
     const params = new URLSearchParams();
@@ -38,8 +38,8 @@ export class SmsService {
    
   
    
-  
-    async sendTwilioSms(to: string, message: string): Promise<any> {
+  //فعال نیست
+    async sendTwilioSms1(to: string, message: string): Promise<any> {
       return await this.client.messages.create({
         body: message,
         from: process.env.TWILIO_PHONE_NUMBER, // شماره Twilio
