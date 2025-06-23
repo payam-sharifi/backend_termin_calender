@@ -36,7 +36,6 @@ export class UpdateTimeSlotDto {
   email: string;
 
   @ApiProperty({ example: "+491234567890" })
-  @IsOptional()
   @IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
   phone: string;
 

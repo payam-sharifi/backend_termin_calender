@@ -54,14 +54,14 @@ export class TimeSlotService {
           desc: body.desc || "",
         },
       });
-      const smsToCustomer = await this.prisma.user.findUnique({
-        where: { id: costumerId || body.customer_id },
-      });
+      // const smsToCustomer = await this.prisma.user.findUnique({
+      //   where: { id: costumerId || body.customer_id },
+      // });
 
-      if (smsToCustomer?.phone) {
-        const text = `Hallo ${smsToCustomer.name}, Ihr Termin wurde erstellt: ${slot.start_time.toLocaleString()}`;
-        await this.smsService.sendTwilioSms(smsToCustomer?.phone, text);
-      }
+      // if (smsToCustomer?.phone) {
+        const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${slot.start_time.toLocaleString()}`;
+        await this.smsService.sendTwilioSms(body.phone, text);
+      // }
       return { slot };
     } catch (error) {
       throw error;
@@ -70,19 +70,35 @@ export class TimeSlotService {
 
 
   async updateTimeSlotsTimeById(id: string, dataRq: UpdateTimeSlotDto) {
-    return await this.prisma.timeSlot.update({
+    const res= await this.prisma.timeSlot.update({
       where: { id },
       data: {
           start_time:dataRq.start_time,
           end_time:dataRq.end_time
       },
-    });
-  }
-  async deleteTimeSlotsById(id: string) {
+
+    }
+  
+  );
+  if(res){
+  const text = `${dataRq.name &&("Hallo" + dataRq.name)}Ihr Termin wurde erstellt: ${dataRq.start_time.toLocaleString()}`;
+ const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
+ return true  
+}  
+return false
+}
+
+
+  async deleteTimeSlotsById(id: string,phone:string) {
     try {
-      return await this.prisma.timeSlot.delete({
+      const res= await this.prisma.timeSlot.delete({
         where: { id },
       });
+      if(res){
+        const text = `Ihr Termin wurde abgesagt.`;
+        const smssent= await this.smsService.sendTwilioSms(phone, text);
+        return true
+      }else return false
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundException(

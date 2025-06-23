@@ -68,11 +68,17 @@ export class TimeSlotController {
   async updateTimeSlotsTimeById( @Param('id') id: string,@Body() body: UpdateTimeSlotDto,){
     try {
       const updated = await this.timeSlot.updateTimeSlotsTimeById(id, body);
+     if(updated){
       return {
         success: true,
         message: 'Dienst erfolgreich aktualisiert',
         data: updated,
       };
+    } return {
+      success: false,
+      message:" Fehler: Es wurden keine Änderungen vorgenommen und keine SMS gesendet.",
+      data: updated,
+    };
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException('Dienst nicht gefunden oder bereits gelöscht.');
@@ -83,16 +89,22 @@ export class TimeSlotController {
 
 
 
-  @Delete(":id")
-  @ApiOperation({ summary: 'Delete a service by ID' })
+  @Delete("/:id/:phone")
+  @ApiOperation({ summary: 'Delete a service by ID and phone' })
   @ApiOkResponse({ description: 'Dienst erfolgreich gelöscht.' })
   @ApiNotFoundResponse({ description: 'Event not found or already deleted.' })
-  async deleteServiceById(@Param("id") id: string) {
-    const deletedTimeSlot = await this.timeSlot.deleteTimeSlotsById(id);
-    return {
-      success: true,
-      message: "Dienst erfolgreich gelöscht.",
+  async deleteServiceById(@Param("id") id: string,@Param("phone") phone: string) {
+    const deletedTimeSlot = await this.timeSlot.deleteTimeSlotsById(id,phone);
+   if(deletedTimeSlot){
+     return {
+       success: true,
+       message: "Dienst erfolgreich gelöscht.",
+       data: deletedTimeSlot,
+     }} 
+     return {
+      success: false,
+      message: "Löschen fehlgeschlagen.",
       data: deletedTimeSlot,
-    };
+    }
   }
 }
