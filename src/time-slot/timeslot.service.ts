@@ -5,6 +5,9 @@ import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 import { SmsService } from "../sms/sms.service";
 import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
+import { toZonedTime, format } from 'date-fns-tz';
+import { convertToBerlinTime } from "utils/time.util";
+
 @Injectable()
 export class TimeSlotService {
   constructor(
@@ -26,8 +29,9 @@ export class TimeSlotService {
       // },
     });
   }
-
+  
   async createTimeSlots(body: CreateTimeSlotDto) {
+    const starttime=convertToBerlinTime(body.start_time)
     try {
       var costumerId = "";
       if (!body.customer_id) {
@@ -54,22 +58,20 @@ export class TimeSlotService {
           desc: body.desc || "",
         },
       });
-      // const smsToCustomer = await this.prisma.user.findUnique({
-      //   where: { id: costumerId || body.customer_id },
-      // });
 
-      // if (smsToCustomer?.phone) {
-        const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${slot.start_time.toLocaleString()}`;
+
+        
+        const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${starttime}`;
         await this.smsService.sendTwilioSms(body.phone, text);
-      // }
+      
       return { slot };
     } catch (error) {
       throw error;
     }
   }
 
-
   async updateTimeSlotsTimeById(id: string, dataRq: UpdateTimeSlotDto) {
+    const starttime=convertToBerlinTime(dataRq.start_time)
     const res= await this.prisma.timeSlot.update({
       where: { id },
       data: {
@@ -81,7 +83,8 @@ export class TimeSlotService {
   
   );
   if(res){
-  const text = `${dataRq.name &&("Hallo" + dataRq.name)}Ihr Termin wurde erstellt: ${dataRq.start_time.toLocaleString()}`;
+    
+  const text = `${dataRq.name &&("Hallo" +" "+ dataRq.name)}, Ihr Termin wurde erstellt: ${starttime}`;
  const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
  return true  
 }  
@@ -90,6 +93,7 @@ return false
 
 
   async deleteTimeSlotsById(id: string,phone:string) {
+   
     try {
       const res= await this.prisma.timeSlot.delete({
         where: { id },

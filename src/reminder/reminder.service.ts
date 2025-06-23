@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { PrismaService } from "prisma/prisma.service";
 import { SmsService } from "src/sms/sms.service";
+import { convertToBerlinTime } from "utils/time.util";
 
 @Injectable()
 export class ReminderService {
@@ -34,10 +35,12 @@ export class ReminderService {
       if (!slot.user?.phone) continue;
 
       try {
+        const starttime=convertToBerlinTime(slot.start_time)
         await this.sendSMS.sendTwilioSms(
           slot.user.phone,
-          `Erinnerung: Ihre Zeit heute ${slot.start_time.toLocaleTimeString("de-DE")} ist.`
-        );
+       //   `Erinnerung: Ihre Zeit heute ${slot.start_time.toLocaleTimeString("de-DE")} ist.`
+         `Erinnerung: Ihre Zeit heute ${starttime} ist.`
+      );
         this.logger.log(`SMS sent to ${slot.user.phone}`);
         await this.prisma.timeSlot.update({
           where: { id: slot.id },
