@@ -62,7 +62,6 @@ export class UserController {
   @Post()
   async createUser(@Body() body: CreateUserDto): Promise<ApiResponseType> {
     const user = await this.userService.create(body);
-    console.log(user,"error")
     return { success: true, data: user, message: "Benutzer erfolgreich erstellt." };
   }
 

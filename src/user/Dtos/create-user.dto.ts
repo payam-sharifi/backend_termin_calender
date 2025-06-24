@@ -19,8 +19,9 @@ export class CreateUserDto {
   family: string;
 
   @ApiProperty({ example: "example@email.com" })
+  @IsOptional()
   @IsEmail({}, { message: 'Die E-Mail-Adresse muss gültig sein.' })
-  email: string;
+  email?: string | null ;
 
   @ApiProperty({ example: "+491234567890" })
   @IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
