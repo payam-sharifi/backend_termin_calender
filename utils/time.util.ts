@@ -5,4 +5,3 @@ export function convertToBerlinTime(dateInput: string | Date): string {
       hour12: false,
     });
   }
-  

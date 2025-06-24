@@ -5,7 +5,6 @@ import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 import { SmsService } from "../sms/sms.service";
 import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
-import { toZonedTime, format } from 'date-fns-tz';
 import { convertToBerlinTime } from "utils/time.util";
 
 @Injectable()

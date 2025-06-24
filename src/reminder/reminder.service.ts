@@ -38,8 +38,8 @@ export class ReminderService {
         const starttime=convertToBerlinTime(slot.start_time)
         await this.sendSMS.sendTwilioSms(
           slot.user.phone,
-       //   `Erinnerung: Ihre Zeit heute ${slot.start_time.toLocaleTimeString("de-DE")} ist.`
-         `Erinnerung: Ihre Zeit heute ${starttime} ist.`
+        //  `Erinnerung: Ihre Zeit heute ${slot.start_time.toLocaleTimeString("de-DE")} ist.`
+        `Erinnerung: Ihre Zeit heute ${starttime} ist.`
       );
         this.logger.log(`SMS sent to ${slot.user.phone}`);
         await this.prisma.timeSlot.update({
