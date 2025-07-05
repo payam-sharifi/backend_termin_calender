@@ -24,6 +24,9 @@ export class OtpService {
     return { message:"Code gesendet"};
   }
 
+
+
+
   async verifyOtp(phone: string, inputCode: string) {
     console.log("verifyOtp run")
     const record = await this.prisma.otp.findFirst({
@@ -39,8 +42,7 @@ export class OtpService {
     }
   
     const isMatch =
-      record.code.length === inputCode.length &&
-      crypto.timingSafeEqual(Buffer.from(record.code), Buffer.from(inputCode));
+      record.code.length === inputCode.length 
         console.log(isMatch,"isMatch")
     if (!isMatch) {
       throw new BadRequestException("Code ist ungültig.");
