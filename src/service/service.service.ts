@@ -40,12 +40,17 @@ export class ServiceService {
   }
 
   //getAllServices without Slots
-  async getAllServices() {
+  async getAllServices(id:string) {
     return this.prisma.service.findMany({
-      // relationLoadStrategy: "join",
-      // include: {
-      //   timeSlots: true,
-      // },
+      relationLoadStrategy: "join",
+      where: {
+        provider_id: id,
+      },
+      include:{
+        user:{
+          select:{name:true}
+        }
+      }
     });
   }
 

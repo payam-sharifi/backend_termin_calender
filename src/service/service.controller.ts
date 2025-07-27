@@ -45,11 +45,11 @@ export class ServiceController {
     };
   }
 
-  @Get()
+  @Get(':id')
   @ApiOperation({ summary: 'Get all services without time slots' })
   @ApiOkResponse({ description: 'Services retrieved successfully.' })
-  async getAllService() {
-    const services = await this.service.getAllServices();
+  async getAllService(@Param('id') id: string,) {
+    const services = await this.service.getAllServices(id);
     if (!services || services.length === 0) {
       return {
         message: "No services registered yet",
