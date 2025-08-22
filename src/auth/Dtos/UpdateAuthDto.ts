@@ -24,7 +24,7 @@ export class UpdateAuthDto {
   password: string;
 
   @IsOptional()
-  @IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
+  //@IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
   @ApiPropertyOptional({ example: "+491234567890" })
   phone?: string;
 

@@ -40,7 +40,7 @@ export class CreateTimeSlotDto {
 
   @ApiProperty({ example: "+491234567890" })
   @IsOptional()
-  @IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
+  //@IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
   phone: string;
 
   @ApiProperty({ example: true })

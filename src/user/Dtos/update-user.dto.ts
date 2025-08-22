@@ -28,9 +28,7 @@ export class UpdateUserDto {
 
   @ApiPropertyOptional({ description: 'Telefonnummer des Benutzers (DE Format)', example: '+491234567890' })
   @IsOptional()
-  @IsPhoneNumber('DE', {
-    message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.',
-  })
+  //@IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.',})
   phone?: string;
 
   @ApiPropertyOptional({ enum: Sex, description: 'Geschlecht des Benutzers', example: 'MALE' })

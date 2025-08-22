@@ -24,7 +24,7 @@ export class CreateUserDto {
   email?: string | null ;
 
   @ApiProperty({ example: "+491234567890" })
-  @IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
+  //@IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
   phone: string;
 
   code:string

@@ -9,7 +9,7 @@ export class LoginUserDto {
 
   @ApiProperty({ example: "+491234567890" })
   @ValidateIf(o => !o.email) 
-  @IsPhoneNumber("DE", { message: "Die Telefonnummer muss eine gültige deutsche Nummer sein." })
+  //@IsPhoneNumber("DE", { message: "Die Telefonnummer muss eine gültige deutsche Nummer sein." })
   phone: string;
 
 

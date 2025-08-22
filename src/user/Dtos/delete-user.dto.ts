@@ -6,8 +6,6 @@ export class DeleteUserDto {
   @IsEmail({}, { message: "Die E-Mail-Adresse muss gültig sein." })
   email: string;
   @ApiProperty({ example: "+491234567890" })
-  @IsPhoneNumber("DE", {
-    message: "Die Telefonnummer muss eine gültige deutsche Nummer sein.",
-  })
+  //@IsPhoneNumber("DE", {  message: "Die Telefonnummer muss eine gültige deutsche Nummer sein.",})
   phone: string;
 }
