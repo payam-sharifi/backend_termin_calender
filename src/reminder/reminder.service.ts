@@ -18,11 +18,12 @@ export class ReminderService {
     const now = new Date();
     const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000);
 
+    // پیدا کردن همه اسلات‌هایی که توی بازه هستن
     const upcomingSlots = await this.prisma.timeSlot.findMany({
       where: {
         start_time: {
           gte: fiveHoursLater,
-          lte: new Date(fiveHoursLater.getTime() + 15 * 60 * 1000),
+          lt: new Date(fiveHoursLater.getTime() + 15 * 60 * 1000), // lt به جای lte
         },
         reminderSent: false,
       },
@@ -35,19 +36,29 @@ export class ReminderService {
       if (!slot.user?.phone) continue;
 
       try {
-        const starttime=convertToBerlinTime(slot.start_time)
-        await this.sendSMS.sendTwilioSms(
-          slot.user.phone,
-        //  `Erinnerung: Ihre Zeit heute ${slot.start_time.toLocaleTimeString("de-DE")} ist.`
-        `Erinnerung: Ihre Zeit heute ${starttime} ist.`
-      );
-        this.logger.log(`SMS sent to ${slot.user.phone}`);
-        await this.prisma.timeSlot.update({
-          where: { id: slot.id },
+        // اتمیک آپدیت → فقط اگر هنوز reminderSent=false باشه، ست میشه
+        const updated = await this.prisma.timeSlot.updateMany({
+          where: { id: slot.id, reminderSent: false },
           data: { reminderSent: true },
         });
+
+        if (updated.count === 0) {
+          // یعنی یکی دیگه همزمان آپدیت کرده → SMS نزن
+          continue;
+        }
+
+        const starttime = convertToBerlinTime(slot.start_time);
+
+        await this.sendSMS.sendTwilioSms(
+          slot.user.phone,
+          `Erinnerung: Ihre Zeit heute ${starttime} ist.`
+        );
+
+        this.logger.log(`SMS sent to ${slot.user.phone}`);
       } catch (error) {
-        this.logger.error(`Failed to send SMS to ${slot.user.phone}: ${error}`);
+        this.logger.error(
+          `Failed to send SMS to ${slot.user?.phone ?? "unknown"}: ${error}`
+        );
       }
     }
   }
