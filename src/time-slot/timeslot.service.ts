@@ -61,7 +61,7 @@ export class TimeSlotService {
 
         
         const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${starttime}`;
-        await this.smsService.sendTwilioSms(body.phone, text);
+       // await this.smsService.sendTwilioSms(body.phone, text);
       
       return { slot };
     } catch (error) {
@@ -83,8 +83,8 @@ export class TimeSlotService {
   );
   if(res){
     
-  const text = `${dataRq.name &&("Hallo" +" "+ dataRq.name)}, Ihr Termin wurde erstellt: ${starttime}`;
- const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
+ // const text = `${dataRq.name &&("Hallo" +" "+ dataRq.name)}, Ihr Termin wurde erstellt: ${starttime}`;
+// const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
  return true  
 }  
 return false

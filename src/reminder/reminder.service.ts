@@ -16,14 +16,14 @@ export class ReminderService {
   @Cron("*/15 * * * *") // هر ۱۵ دقیقه
   async handleReminderCheck() {
     const now = new Date();
-    const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000);
+    const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    // پیدا کردن همه اسلات‌هایی که توی بازه هستن
+    // پیدا کردن همه اسلات‌هایی که توی بازه ۲۴ ساعت آینده هستند
     const upcomingSlots = await this.prisma.timeSlot.findMany({
       where: {
         start_time: {
-          gte: fiveHoursLater,
-          lt: new Date(fiveHoursLater.getTime() + 15 * 60 * 1000), // lt به جای lte
+          gte: twentyFourHoursLater,
+          lt: new Date(twentyFourHoursLater.getTime() + 15 * 60 * 1000),
         },
         reminderSent: false,
       },
@@ -51,7 +51,7 @@ export class ReminderService {
 
         await this.sendSMS.sendTwilioSms(
           slot.user.phone,
-          `Erinnerung: Ihre Zeit heute ${starttime} ist.`
+          `Erinnerung: Ihre Zeit morgen um ${starttime} ist.`
         );
 
         this.logger.log(`SMS sent to ${slot.user.phone}`);
