@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { TimeSlotEnum } from "@prisma/client";
+import { Prisma, TimeSlotEnum } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 import { SmsService } from "../sms/sms.service";
 import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
 import { convertToBerlinTime } from "utils/time.util";
+import { GetUserTimeSlotsDto } from "./Dtos/getUserTimeSlots.dto";
 
 @Injectable()
 export class TimeSlotService {
@@ -91,6 +92,7 @@ return false
 }
 
 
+
   async deleteTimeSlotsById(id: string,phone:string) {
    
     try {
@@ -111,6 +113,73 @@ return false
       throw error;
     }
   }
+  async getUserTimeSlots(query: GetUserTimeSlotsDto) {
+    const { 
+      user_id, 
+      start_time, 
+      end_time, 
+     
+    } = query;
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    // Build where clause
+    const where: Prisma.TimeSlotWhereInput = {
+      customer_id: user_id,
+    };
 
+    // Add time filters if provided
+    if (start_time) {
+      where.start_time = {
+        gte: new Date(start_time),
+      };
+    }
+
+    if (end_time) {
+      where.end_time = {
+        lte: new Date(end_time),
+      };
+    }
+
+    // Get total count for pagination
+    const total = await this.prisma.timeSlot.count({
+      where,
+    });
+
+    // Get paginated results
+    const timeSlots = await this.prisma.timeSlot.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: {
+        start_time: 'asc',
+      },
+      include: {
+        service: {
+          select: {
+            id: true,
+            title: true,
+            duration: true,
+            price: true,
+            color: true,
+            description: true,
+          },
+        },
+      },
+    });
+
+    return {
+      data: timeSlots,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+        hasNext: page * limit < total,
+        hasPrev: page > 1,
+      },
+    };
+  }
 
 }

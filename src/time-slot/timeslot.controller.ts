@@ -14,9 +14,10 @@ import {
 import { TimeSlotService } from "./timeslot.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
 
-import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
 import { GetTimeslotDto } from "./Dtos/getTimeslot.dtos";
 import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
+import { GetUserTimeSlotsDto } from "./Dtos/getUserTimeSlots.dto";
 
 @Controller("timeslot")
 export class TimeSlotController {
@@ -58,6 +59,11 @@ export class TimeSlotController {
       );
     }
   }
+
+
+
+
+
 
   @Put(':id')
   @ApiOperation({ summary: "update time of event" })
@@ -105,6 +111,51 @@ export class TimeSlotController {
       success: false,
       message: "Löschen fehlgeschlagen.",
       data: deletedTimeSlot,
+    }
+  }
+
+
+
+
+  @Get("user/time-slots")
+  @ApiOperation({ summary: "Get all timeslots for a user with pagination and filtering" })
+  @ApiQuery({ name: "user_id", required: true, type: String })
+  @ApiQuery({ name: "start_time", required: false, type: String })
+  @ApiQuery({ name: "end_time", required: false, type: String })
+  @ApiQuery({ name: "page", required: false, type: Number })
+  @ApiQuery({ name: "limit", required: false, type: Number })
+  @ApiResponse({
+    status: 200,
+    description: "User timeslots retrieved successfully",
+  })
+  @ApiResponse({ status: 400, description: "Bad Request" })
+  async getUserTimeSlots(@Query() query: GetUserTimeSlotsDto) {
+    try {
+      if (!query.user_id) {
+        throw new HttpException(
+          "User ID is required",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const result = await this.timeSlot.getUserTimeSlots(query);
+      
+      return {
+        statusCode: HttpStatus.OK,
+        message: "User timeslots retrieved successfully",
+        data: result.data,
+        pagination: result.pagination,
+      };
+    } catch (error) {
+      console.error("Error fetching user timeslots:", error);
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: "Failed to retrieve user timeslots",
+          error: error?.message || error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

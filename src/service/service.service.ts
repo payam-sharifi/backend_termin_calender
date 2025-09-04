@@ -92,6 +92,45 @@ export class ServiceService {
     });
   }
 
+
+  async getAllServicesWithCostumerId(body: GetServiceDto) {
+    const startDateTime = new Date(`${body.start_time}T00:00:00.000Z`);
+    const endDateTime = new Date(new Date(body.end_time));
+    endDateTime.setDate(endDateTime.getDate() + 1);
+    return await this.prisma.service.findMany({
+      relationLoadStrategy: "join",
+      where: {
+        provider_id: body.provider_id,
+      },
+      include: {
+        timeSlots: {
+          where: {
+            start_time: {
+              gte: startDateTime, //new Date(start_date),
+            },
+            end_time: {
+              lte: endDateTime, //new Date(end_date),
+            },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                family: true,
+                email: true,
+                phone: true,
+                sex: true,
+                is_verified: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+
   async updateWithProviderId(id: string, dataRq: UpdateServiceDto) {
     return await this.prisma.service.update({
       where: { id },
