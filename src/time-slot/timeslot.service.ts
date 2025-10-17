@@ -76,7 +76,9 @@ export class TimeSlotService {
       where: { id },
       data: {
           start_time:dataRq.start_time,
-          end_time:dataRq.end_time
+          end_time:dataRq.end_time,
+          service_id:dataRq.service_id,
+         
       },
 
     }
