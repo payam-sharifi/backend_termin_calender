@@ -102,10 +102,10 @@ return false
         where: { id },
       });
       if(res){
-        const text = `Ihr Termin wurde abgesagt.`;
-        const smssent= await this.smsService.sendTwilioSms(phone, text);
+       // const text = `Ihr Termin wurde abgesagt.`;
+       // const smssent= await this.smsService.sendTwilioSms(phone, text);
         return true
-      }else return false
+      }//else return false
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundException(
