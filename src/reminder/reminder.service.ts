@@ -47,11 +47,13 @@ export class ReminderService {
           continue;
         }
 
-        const starttime = convertToBerlinTime(slot.start_time);
+        const { date, time } = convertToBerlinTime(slot.start_time);
+        console.log(`Terminerinnerung am ${date} um ${time} Uhr bei Hengameh Luxebeauty.`)
+      
 
         await this.sendSMS.sendTwilioSms(
           slot.user.phone,
-          `Erinnerung: Ihre Zeit morgen um ${starttime} ist.`
+          `Terminerinnerung am ${date} um ${time} Uhr bei Hengameh Luxebeauty.`
         );
 
         this.logger.log(`SMS sent to ${slot.user.phone}`);

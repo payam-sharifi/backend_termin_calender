@@ -31,7 +31,7 @@ export class TimeSlotService {
   }
   
   async createTimeSlots(body: CreateTimeSlotDto) {
-    const starttime=convertToBerlinTime(body.start_time)
+ 
     try {
       var costumerId = "";
       if (!body.customer_id) {
@@ -58,10 +58,9 @@ export class TimeSlotService {
           desc: body.desc || "",
         },
       });
+     
 
-
-        
-        const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${starttime}`;
+        //const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: ${starttime}`;
        // await this.smsService.sendTwilioSms(body.phone, text);
       
       return { slot };
