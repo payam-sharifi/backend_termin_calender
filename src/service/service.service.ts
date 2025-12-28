@@ -57,8 +57,10 @@ export class ServiceService {
   //getAllServices with Slots
   async getAllServicesWithProviderId(body: GetServiceDto) {
     const startDateTime = new Date(`${body.start_time}T00:00:00.000Z`);
-    const endDateTime = new Date(new Date(body.end_time));
-    endDateTime.setDate(endDateTime.getDate() + 1);
+    const endDateTime = new Date(`${body.end_time}T23:59:59.999Z`);
+    // Add 1 day to endDateTime to include the entire end date
+    endDateTime.setUTCDate(endDateTime.getUTCDate() + 1);
+    endDateTime.setUTCHours(0, 0, 0, 0);
     return await this.prisma.service.findMany({
       relationLoadStrategy: "join",
       where: {
@@ -68,10 +70,8 @@ export class ServiceService {
         timeSlots: {
           where: {
             start_time: {
-              gte: startDateTime, //new Date(start_date),
-            },
-            end_time: {
-              lte: endDateTime, //new Date(end_date),
+              gte: startDateTime,
+              lt: endDateTime, // Use lt instead of lte with end_time check
             },
           },
           include: {
@@ -95,8 +95,10 @@ export class ServiceService {
 
   async getAllServicesWithCostumerId(body: GetServiceDto) {
     const startDateTime = new Date(`${body.start_time}T00:00:00.000Z`);
-    const endDateTime = new Date(new Date(body.end_time));
-    endDateTime.setDate(endDateTime.getDate() + 1);
+    const endDateTime = new Date(`${body.end_time}T23:59:59.999Z`);
+    // Add 1 day to endDateTime to include the entire end date
+    endDateTime.setUTCDate(endDateTime.getUTCDate() + 1);
+    endDateTime.setUTCHours(0, 0, 0, 0);
     return await this.prisma.service.findMany({
       relationLoadStrategy: "join",
       where: {
@@ -106,10 +108,8 @@ export class ServiceService {
         timeSlots: {
           where: {
             start_time: {
-              gte: startDateTime, //new Date(start_date),
-            },
-            end_time: {
-              lte: endDateTime, //new Date(end_date),
+              gte: startDateTime,
+              lt: endDateTime, // Use lt instead of lte with end_time check
             },
           },
           include: {
