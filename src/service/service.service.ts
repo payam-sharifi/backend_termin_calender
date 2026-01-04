@@ -45,6 +45,12 @@ export class ServiceService {
       relationLoadStrategy: "join",
       where: {
         provider_id: id,
+        // Filter out self-reservation default service (title starts with "___SELF_RESERVATION___")
+        NOT: {
+          title: {
+            startsWith: "___SELF_RESERVATION___"
+          }
+        }
       },
       include:{
         user:{
@@ -65,6 +71,7 @@ export class ServiceService {
       relationLoadStrategy: "join",
       where: {
         provider_id: body.provider_id,
+        // Don't filter out self-reservation service here - we need it to display timeSlots in calendar
       },
       include: {
         timeSlots: {

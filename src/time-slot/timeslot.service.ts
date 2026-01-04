@@ -33,28 +33,69 @@ export class TimeSlotService {
   async createTimeSlots(body: CreateTimeSlotDto) {
  
     try {
-      var costumerId = "";
-      if (!body.customer_id) {
-        const customer = await this.prisma.user.create({
-          data: {
-            name: body.name,
-            family: body.family,
-            phone: body.phone,
-            email: body.email,
-            sex: body.sex,
-            password: "",
-            is_verified: true,
+      var costumerId: string | null = null;
+      var serviceIdToUse: string;
+      
+      // If it's a self-reservation, get or create default service
+      if (body.is_self_reservation && body.provider_id) {
+        const defaultServiceTitle = `___SELF_RESERVATION___${body.provider_id}`;
+        let defaultService = await this.prisma.service.findFirst({
+          where: {
+            title: defaultServiceTitle,
+            provider_id: body.provider_id,
           },
         });
-        costumerId = customer.id;
+        
+        if (!defaultService) {
+          // Create default service for self-reservation
+          defaultService = await this.prisma.service.create({
+            data: {
+              provider_id: body.provider_id,
+              title: defaultServiceTitle,
+              duration: 30, // Default duration
+              is_active: true,
+              price: 0,
+              description: "Default service for self-reservation",
+              color: "#9B59B6", // Purple color for self-reservation
+            },
+          });
+        }
+        
+        serviceIdToUse = defaultService.id;
+        costumerId = body.provider_id; // Use provider_id as customer_id for self-reservation
+      } else {
+        // For regular reservations, service_id is required
+        if (!body.service_id) {
+          throw new NotFoundException("Service ID is required for non-self reservations");
+        }
+        serviceIdToUse = body.service_id;
+        // If it's not a self-reservation, handle customer creation
+        if (!body.customer_id) {
+          // Only create customer if it's not a self-reservation
+          const customer = await this.prisma.user.create({
+            data: {
+              name: body.name,
+              family: body.family,
+              phone: body.phone,
+              email: body.email,
+              sex: body.sex,
+              password: "",
+              is_verified: true,
+            },
+          });
+          costumerId = customer.id;
+        } else {
+          costumerId = body.customer_id;
+        }
       }
+      
       const slot = await this.prisma.timeSlot.create({
         data: {
           start_time: body.start_time,
           end_time: body.end_time,
-          service_id: body.service_id,
+          service_id: serviceIdToUse,
           status: TimeSlotEnum.Available,
-          customer_id: costumerId != "" ? costumerId : body.customer_id,
+          customer_id: costumerId,
           desc: body.desc || "",
         },
       });

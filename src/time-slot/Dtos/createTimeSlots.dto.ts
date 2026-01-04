@@ -57,9 +57,10 @@ export class CreateTimeSlotDto {
   @IsString({ message: 'Die Startzeit muss eine Zeichenkette sein.' })
   start_time: string;
 
-  @ApiProperty({ description: 'Dienst-ID für dieses Zeitfenster', example: 'uuid-string-here' })
+  @ApiPropertyOptional({ description: 'Dienst-ID für dieses Zeitfenster', example: 'uuid-string-here' })
+  @IsOptional()
   @IsString({ message: 'Die Dienst-ID muss eine Zeichenkette sein.' })
-  service_id: string;
+  service_id?: string;
 
   @ApiProperty({ description: 'Endzeit des Zeitfensters', example: '2025-06-15T11:00:00Z' })
   @IsString({ message: 'Die Endzeit muss eine Zeichenkette sein.' })
@@ -79,4 +80,14 @@ export class CreateTimeSlotDto {
   @IsOptional()
   @IsString({ message: 'Die Endzeit muss eine Zeichenkette sein.' })
   desc?: string;
+
+  @ApiPropertyOptional({ description: 'If true, reservation is for provider themselves (no customer, no SMS)', example: false })
+  @IsOptional()
+  @IsBoolean({ message: 'Der Wert muss ein Wahrheitswert (true oder false) sein.' })
+  is_self_reservation?: boolean;
+
+  @ApiPropertyOptional({ description: 'Provider ID for self-reservation default service', example: 'uuid-string-here' })
+  @IsOptional()
+  @IsString({ message: 'Die Provider-ID muss eine Zeichenkette sein.' })
+  provider_id?: string;
 }
