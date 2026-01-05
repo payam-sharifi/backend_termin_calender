@@ -25,6 +25,8 @@ async function bootstrap() {
   const defaultOrigins = [
     'https://termin.hengameh-luxe-beauty.de',
     'https://www.termin.hengameh-luxe-beauty.de',
+    'https://www.termin.appventuregmbh.com',
+    'https://termin.appventuregmbh.com',
   ];
   
   // Parse allowed origins from environment variable (comma-separated)
