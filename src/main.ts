@@ -34,6 +34,10 @@ async function bootstrap() {
     'https://www.termin.hengameh-luxe-beauty.de',
     'https://www.termin.appventuregmbh.com',
     'https://termin.appventuregmbh.com',
+    'https://termin-pwa.hengameh-luxe-beauty.de',
+    'https://termin-pwa.appventuregmbh.com',
+    'https://www.termin-pwa.appventuregmbh.com',
+  
   ];
 
   // Parse ALLOWED_ORIGINS from env variable (comma-separated)
