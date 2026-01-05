@@ -32,7 +32,7 @@ async function bootstrap() {
   // Parse allowed origins from environment variable (comma-separated)
   // Example: ALLOWED_ORIGINS=http://localhost:4500,http://172.20.10.4:4500,https://yourdomain.com
   const envOrigins = allowedOrigins 
-    ? allowedOrigins.split(',').map(origin => origin.trim()).filter(origin => origin.length > 0)
+    ? allowedOrigins.split('https://termin.appventuregmbh.com,https://www.termin.appventuregmbh.com,https://termin.hengameh-luxe-beauty.de,https://www.termin.hengameh-luxe-beauty.de').map(origin => origin.trim()).filter(origin => origin.length > 0)
     : [];
   
   // Combine default origins with environment origins (remove duplicates)
