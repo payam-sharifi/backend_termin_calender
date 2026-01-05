@@ -23,8 +23,8 @@ async function bootstrap() {
   
   // Default production origins (for PWA support)
   const defaultOrigins = [
-    'https://termin.appventuregmbh.com',
-    'https://www.termin.appventuregmbh.com',
+    'https://termin.hengameh-luxe-beauty.de',
+    'https://www.termin.hengameh-luxe-beauty.de',
   ];
   
   // Parse allowed origins from environment variable (comma-separated)
