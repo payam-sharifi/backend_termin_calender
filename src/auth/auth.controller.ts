@@ -43,19 +43,18 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: "User created successfully" })
   async register(@Body() body: CreateUserDto) {
-    const valid = await this.otpService.verifyOtp(body.phone, body.code);
-    if (valid) {
-      const user = await this.prisma.user.findUnique({
-        where: { phone: body.phone },
-      });
-      if (!user) {
-        const user = await this.authService.create(body);
-        return {success: true, data:user, message: "Anmeldung erfolgreich" };
-      }
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { phone: body.phone },
+    });
+    
+    if (existingUser) {
       return { success: false, data: null, message: "Benutzer existiert bereits"};
     }
-    return { success: false, data: null, message: "Der eingegebene Code ist falsch" };
-   
+    
+    // Create user without OTP verification
+    const user = await this.authService.create(body);
+    return {success: true, data:user, message: "Anmeldung erfolgreich" };
   }
  
   @Post("send-otp")

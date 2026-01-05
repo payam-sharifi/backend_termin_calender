@@ -27,7 +27,11 @@ export class CreateUserDto {
   //@IsPhoneNumber('DE', { message: 'Die Telefonnummer muss eine gültige deutsche Nummer sein.' })
   phone: string;
 
-  code:string
+  @ApiProperty({ example: "1234", required: false })
+  @IsOptional()
+  @IsString()
+  code?: string; // Optional - no longer required for registration
+  
   @ApiProperty({ example: "male" })
   @IsOptional()
   @IsString({ message: 'Das Geschlecht muss ein TEXT sein.' })
