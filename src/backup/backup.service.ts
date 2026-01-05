@@ -34,7 +34,9 @@ export class BackupService {
         -h ${parsedUrl.hostname} \
         -p ${parsedUrl.port} \
         -U ${parsedUrl.username} \
-        -d ${parsedUrl.pathname.slice(1)} | gzip > ${backupFile}`;
+        -d ${parsedUrl.pathname.slice(1)} \
+        --clean \
+        --if-exists | gzip > ${backupFile}`;
       
       await execAsync(command);
       this.logger.log(`Backup created: ${backupFile}`);

@@ -91,7 +91,14 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   };
 
-  app.enableCors(corsOptions);
+  app.enableCors({
+    origin: [
+      'https://pwa-termin.appventuregmbh.com',
+      'https://api-pwa.appventuregmbh.com',
+    ],
+    credentials: true,
+    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  });
 
   // Log CORS configuration
   if (nodeEnv === 'production') {
