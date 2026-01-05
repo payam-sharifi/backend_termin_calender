@@ -16,12 +16,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   
   app.enableCors({
-   origin: ['https://appventuregmbh.com', 'https://www.appventuregmbh.com','https://termin.appventuregmbh.com','https://termin.hengameh-luxe-beauty.de','https://hengameh-luxe-beauty.de','https://www.hengameh-luxe-beauty.de/'],
+   origin: [, 'https://pwa-termin.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://termin.appventuregmbh.com','https://termin.hengameh-luxe-beauty.de','https://hengameh-luxe-beauty.de',],
    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
    allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
   
   });
-  
+
 
   const config = new DocumentBuilder()
     .setTitle("Reservation API")
