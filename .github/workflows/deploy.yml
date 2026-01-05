@@ -2,7 +2,7 @@ name: Deploy nest.js to Server
 
 on:
   push:
-    branches: [ main ]
+    branches: [ pwa ]
 
 jobs:
   deploy:
@@ -22,11 +22,11 @@ jobs:
           port: 22
           timeout: 5m  # Correct parameter name
           script: |
-            cd /termin/backend_termin_calender
+            cd /termin/pwa-termin/server
             git pull 
             npm install
             npm run build
-            pm2 delete termin-back-app || true
-            pm2 start /termin/backend_termin_calender/dist/src/main.js --name "termin-back-app" --watch -- --port 4001
+            pm2 delete pwa-termin-backend || true
+            pm2 start /termin/pwa-termin/server/dist/src/main.js --name "pwa-termin-backend" --watch -- --port 4002
             pm2 save
             pm2 startup
