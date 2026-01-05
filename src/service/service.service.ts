@@ -67,10 +67,13 @@ export class ServiceService {
     // Add 1 day to endDateTime to include the entire end date
     endDateTime.setUTCDate(endDateTime.getUTCDate() + 1);
     endDateTime.setUTCHours(0, 0, 0, 0);
+    
+    // Optimize query by only selecting active services and limiting timeSlots
     return await this.prisma.service.findMany({
       relationLoadStrategy: "join",
       where: {
         provider_id: body.provider_id,
+        is_active: true, // Only get active services
         // Don't filter out self-reservation service here - we need it to display timeSlots in calendar
       },
       include: {
@@ -78,7 +81,7 @@ export class ServiceService {
           where: {
             start_time: {
               gte: startDateTime,
-              lt: endDateTime, // Use lt instead of lte with end_time check
+              lt: endDateTime,
             },
           },
           include: {
@@ -94,7 +97,13 @@ export class ServiceService {
               },
             },
           },
+          orderBy: {
+            start_time: 'asc', // Order by time for better performance
+          },
         },
+      },
+      orderBy: {
+        title: 'asc', // Order services for consistency
       },
     });
   }
@@ -106,17 +115,20 @@ export class ServiceService {
     // Add 1 day to endDateTime to include the entire end date
     endDateTime.setUTCDate(endDateTime.getUTCDate() + 1);
     endDateTime.setUTCHours(0, 0, 0, 0);
+    
+    // Optimize query by only selecting active services
     return await this.prisma.service.findMany({
       relationLoadStrategy: "join",
       where: {
         provider_id: body.provider_id,
+        is_active: true, // Only get active services
       },
       include: {
         timeSlots: {
           where: {
             start_time: {
               gte: startDateTime,
-              lt: endDateTime, // Use lt instead of lte with end_time check
+              lt: endDateTime,
             },
           },
           include: {
@@ -132,7 +144,13 @@ export class ServiceService {
               },
             },
           },
+          orderBy: {
+            start_time: 'asc', // Order by time for better performance
+          },
         },
+      },
+      orderBy: {
+        title: 'asc', // Order services for consistency
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Post, Put, Query } from "@nestjs/common";
 import { CreateAppintmentDto } from "./Dtos/create-appointment.dtos";
 import { AppointmentService } from "./appointment.service";
 import { GetAppintmentDto } from "./Dtos/get-appointment.dtos";
@@ -24,12 +24,12 @@ export class AppointmentController {
   // }
 
   @Get()
-  getAllAppoinmentsByDateAndId(@Body() body:GetAppintmentDto) {
+  getAllAppoinmentsByDateAndId(@Query() query: GetAppintmentDto) {
     try {
-      if(body)return this.appointmentService.getAllAppointments(body);
-      return "you sent empty information"
+      return this.appointmentService.getAllAppointments(query);
     } catch (error) {
-     console.log(error) 
+      console.log(error);
+      throw error;
     }
   }
 

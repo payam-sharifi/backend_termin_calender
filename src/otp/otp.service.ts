@@ -28,25 +28,33 @@ export class OtpService {
 
 
   async verifyOtp(phone: string, inputCode: string) {
-    console.log("verifyOtp run")
+    // Get the most recent OTP for this phone (optimized query)
     const record = await this.prisma.otp.findFirst({
       where: {
         phone,
-        
+        expiresAt: {
+          gt: new Date(), // Only get non-expired OTPs
+        },
       },
-    
+      orderBy: {
+        createdAt: 'desc', // Get the most recent one
+      },
     });
-      console.log(record,"record")
+    
     if (!record) {
       throw new BadRequestException("Code ist ungültig oder abgelaufen.");
     }
   
-    const isMatch =
-      record.code.length === inputCode.length 
-        console.log(isMatch,"isMatch")
+    // Verify code match
+    const isMatch = record.code === inputCode;
     if (!isMatch) {
       throw new BadRequestException("Code ist ungültig.");
     }
+  
+    // Delete used OTP to prevent reuse
+    await this.prisma.otp.delete({
+      where: { id: record.id },
+    }).catch(() => {}); // Ignore errors if already deleted
   
     return true;
   }
