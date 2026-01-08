@@ -15,12 +15,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
   
-  app.enableCors({
-   origin: [ 'http://localhost:3003', 'https://pwa-termin.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://termin.appventuregmbh.com','https://termin.hengameh-luxe-beauty.de','https://hengameh-luxe-beauty.de',],
-   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-   allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
+  //app.enableCors({
+  // origin: [ 'http://localhost:3003', 'https://pwa-termin.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://termin.appventuregmbh.com','https://termin.hengameh-luxe-beauty.de','https://hengameh-luxe-beauty.de',],
+   //methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  // allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
   
-  });
+  //});
 
 
   const config = new DocumentBuilder()
