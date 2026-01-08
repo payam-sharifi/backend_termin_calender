@@ -50,54 +50,15 @@ async function bootstrap() {
   const origins = [...new Set([...defaultOrigins, ...envOrigins])];
 
   // CORS configuration
-  const corsOptions = {
-    origin: nodeEnv === 'production'
-      ? (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-          // Allow requests with no origin (e.g., mobile apps, curl, service workers)
-          if (!origin) return callback(null, true);
-
-          // Normalize origin (remove trailing slash)
-          const normalizedOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
-          const allowed = origins.map(o => o.endsWith('/') ? o.slice(0, -1) : o);
-
-          // Allow if origin is in allowed list
-          if (allowed.includes(normalizedOrigin)) return callback(null, true);
-
-          // Allow localhost / 127.0.0.1 for testing
-          if (origin.includes('localhost') || origin.includes('127.0.0.1')) return callback(null, true);
-
-          // Reject all other origins
-          callback(new Error('Not allowed by CORS'));
-        }
-      : true, // Allow all origins in development
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: [
-      'Origin',
-      'X-Requested-With',
-      'Content-Type',
-      'Accept',
-      'Authorization',
-      'Cache-Control',
-    ],
-    exposedHeaders: [
-      'Content-Length',
-      'Content-Type',
-      'Cache-Control',
-      'ETag',
-    ],
-    credentials: true,
-    maxAge: 86400, // 24 hours
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  };
+ 
 
 
-  app.enableCors({
-      origin: ['https://appventuregmbh.com', 'https://termin-pwa.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://www.appventuregmbh.com'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
+//  app.enableCors({
+  //    origin: ['https://appventuregmbh.com', 'https://termin-pwa.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://www.appventuregmbh.com'],
+    //  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   //   allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
   
-    });
+    //});
   // Log CORS configuration
   if (nodeEnv === 'production') {
     console.log('🔒 CORS configured for production');
