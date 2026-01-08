@@ -93,7 +93,7 @@ async function bootstrap() {
 
 
   app.enableCors({
-      origin: ['https://appventuregmbh.com', 'https://pwa-termin.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://www.appventuregmbh.com'],
+      origin: ['https://appventuregmbh.com', 'https://termin-pwa.appventuregmbh.com','https://api-pwa.appventuregmbh.com','https://www.appventuregmbh.com'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Origin', 'Content-Type', 'Accept', 'Authorization'],
   
