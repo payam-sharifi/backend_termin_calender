@@ -27,6 +27,6 @@ jobs:
             npm install
             npm run build
             pm2 delete pwa-termin-backend || true
-            pm2 start /termin/pwa-termin/server/dist/src/main.js --name "pwa-termin-backend" --watch -- --port 4002
+            PORT=4002 pm2 start /termin/pwa-termin/server/dist/src/main.js --name "pwa-termin-backend"
             pm2 save
             pm2 startup
