@@ -14,6 +14,7 @@ export class ReminderService {
   ) {}
 
   @Cron("*/15 * * * *") // هر ۱۵ دقیقه
+  //@Cron("* * * * *")
   async handleReminderCheck() {
     const now = new Date();
     const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -29,11 +30,22 @@ export class ReminderService {
       },
       include: {
         user: true,
+        service: true,
       },
     });
-
     for (const slot of upcomingSlots) {
       if (!slot.user?.phone) continue;
+
+      // برای ترمین‌های خود (هاشور) SMS نفرست
+      const isSelfReservation = slot.service?.title?.startsWith("___SELF_RESERVATION___") ?? false;
+      if (isSelfReservation) {
+        await this.prisma.timeSlot.update({
+          where: { id: slot.id },
+          data: { reminderSent: true },
+        });
+        this.logger.log(`Skipped SMS for self-reservation slot ${slot.id}`);
+        continue;
+      }
 
       try {
         // اتمیک آپدیت → فقط اگر هنوز reminderSent=false باشه، ست میشه
@@ -48,13 +60,13 @@ export class ReminderService {
         }
 
         const { date, time } = convertToBerlinTime(slot.start_time);
-        console.log(`Terminerinnerung am ${date} um ${time} Uhr bei Hengameh Luxebeauty.`)
-      
+        console.log(`Terminerinnerung am ${date} um ${time} Uhr bei Hengameh Luxebeauty.`);
 
         await this.sendSMS.sendTwilioSms(
           slot.user.phone,
           `Terminerinnerung am ${date} um ${time} Uhr bei Hengameh Luxebeauty.`
         );
+        console.log("sms sent");
 
         this.logger.log(`SMS sent to ${slot.user.phone}`);
       } catch (error) {
