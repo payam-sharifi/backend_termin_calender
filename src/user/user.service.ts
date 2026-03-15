@@ -44,13 +44,11 @@ export class UserService {
         "User already exists with given email or phone."
       );
     }
-    const { email, ...rest } = dto;
-
     const userData = {
-   ...dto,
+      ...dto,
+      family: dto.family ?? "",
       ...(dto.email && { email: dto.email }),
     };
-console.log(userData,"userData")
     const user = await this.prisma.user.create({ data:userData });
     
     return user;
