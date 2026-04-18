@@ -287,6 +287,23 @@ export class AgentService {
       };
     }
 
+    const endParsed = new Date(
+      parsed.getTime() + Math.max(1, service.duration) * 60 * 1000
+    );
+    const overlap = await this.timeSlotService.findOverlappingTimeSlotForProvider(
+      providerId,
+      parsed,
+      endParsed
+    );
+    if (overlap) {
+      return {
+        success: false,
+        step: "datetime",
+        message:
+          "This time overlaps an existing appointment. Please choose another time.",
+      };
+    }
+
     const reqLabel = formatDateTimeBerlin(parsed);
     return {
       success: true,

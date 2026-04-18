@@ -48,6 +48,9 @@ export class TimeSlotController {
         data: res,
       };
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       console.error("Error creating time slot:", error);
       throw new HttpException(
         {

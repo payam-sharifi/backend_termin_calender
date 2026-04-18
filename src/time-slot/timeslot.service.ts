@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { Prisma, TimeSlotEnum } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateTimeSlotDto } from "./Dtos/createTimeSlots.dto";
@@ -8,12 +13,54 @@ import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
 import { convertToBerlinTime } from "utils/time.util";
 import { GetUserTimeSlotsDto } from "./Dtos/getUserTimeSlots.dto";
 
+/** Parses slot bounds; throws BadRequestException if invalid or start >= end. */
+function parseIntervalOrThrow(
+  startRaw: string,
+  endRaw: string
+): { start: Date; end: Date } {
+  const start = new Date(startRaw);
+  const end = new Date(endRaw);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    throw new BadRequestException(
+      "Ungültiges Start- oder Enddatum. Erwartet wird ein gültiges Datum/Zeit-Format (z. B. ISO 8601)."
+    );
+  }
+  if (start.getTime() >= end.getTime()) {
+    throw new BadRequestException(
+      "Die Startzeit muss vor der Endzeit liegen."
+    );
+  }
+  return { start, end };
+}
+
 @Injectable()
 export class TimeSlotService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly smsService: SmsService
   ) {}
+
+  /**
+   * Any non-cancelled slot for this provider that overlaps [start, end) blocks booking.
+   * Overlap: existing.start < newEnd AND existing.end > newStart (same rule as calendar UI).
+   */
+  async findOverlappingTimeSlotForProvider(
+    providerId: string,
+    start: Date,
+    end: Date,
+    excludeTimeSlotId?: string
+  ) {
+    return this.prisma.timeSlot.findFirst({
+      where: {
+        ...(excludeTimeSlotId ? { id: { not: excludeTimeSlotId } } : {}),
+        status: { not: TimeSlotEnum.Cancelled },
+        service: { provider_id: providerId },
+        start_time: { lt: end },
+        end_time: { gt: start },
+      },
+      select: { id: true, start_time: true, end_time: true },
+    });
+  }
   async getAvailableTimeSlot(body: GetTimeslotDto) {
     return this.prisma.timeSlot.findMany({
       relationLoadStrategy: "join",
@@ -88,7 +135,26 @@ export class TimeSlotService {
           costumerId = body.customer_id;
         }
       }
-      
+
+      const { start, end } = parseIntervalOrThrow(body.start_time, body.end_time);
+      const serviceRow = await this.prisma.service.findUnique({
+        where: { id: serviceIdToUse },
+        select: { provider_id: true },
+      });
+      if (!serviceRow) {
+        throw new NotFoundException("Dienst nicht gefunden.");
+      }
+      const clash = await this.findOverlappingTimeSlotForProvider(
+        serviceRow.provider_id,
+        start,
+        end
+      );
+      if (clash) {
+        throw new ConflictException(
+          "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit."
+        );
+      }
+
       const slot = await this.prisma.timeSlot.create({
         data: {
           start_time: body.start_time,
@@ -111,8 +177,45 @@ export class TimeSlotService {
   }
 
   async updateTimeSlotsTimeById(id: string, dataRq: UpdateTimeSlotDto) {
-    const starttime=convertToBerlinTime(dataRq.start_time)
-    const res= await this.prisma.timeSlot.update({
+    const existing = await this.prisma.timeSlot.findUnique({
+      where: { id },
+      include: { service: true },
+    });
+    if (!existing) {
+      throw new NotFoundException(
+        "Dienst nicht gefunden oder bereits gelöscht."
+      );
+    }
+
+    const serviceId = dataRq.service_id ?? existing.service_id;
+    const service =
+      serviceId === existing.service_id
+        ? existing.service
+        : await this.prisma.service.findUnique({
+            where: { id: serviceId },
+          });
+    if (!service) {
+      throw new NotFoundException("Dienst nicht gefunden.");
+    }
+
+    const { start, end } = parseIntervalOrThrow(
+      dataRq.start_time,
+      dataRq.end_time
+    );
+    const clash = await this.findOverlappingTimeSlotForProvider(
+      service.provider_id,
+      start,
+      end,
+      id
+    );
+    if (clash) {
+      throw new ConflictException(
+        "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit."
+      );
+    }
+
+    const starttime = convertToBerlinTime(dataRq.start_time);
+    const res = await this.prisma.timeSlot.update({
       where: { id },
       data: {
           start_time:dataRq.start_time,
