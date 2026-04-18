@@ -42,6 +42,20 @@ export class AgentService {
     });
   }
 
+  /** Default self-reservation service (created on first Selbst booking); duration fallback 30 min. */
+  private async selfReservationDefaultDurationMinutes(
+    providerId: string,
+  ): Promise<number> {
+    const row = await this.prisma.service.findFirst({
+      where: {
+        provider_id: providerId,
+        title: { startsWith: "___SELF_RESERVATION___" },
+      },
+      select: { duration: true },
+    });
+    return Math.max(1, row?.duration ?? 30);
+  }
+
   private serviceLine(s: {
     title: string;
     duration: number;
@@ -248,11 +262,13 @@ export class AgentService {
 
   /**
    * Step 3: accept date/time format only (no free-slot check). User confirms in step 4.
+   * `selfReservation`: Selbstbuchung — wie Kalender „Selbst“, ohne Kunden-/Dienstwahl.
    */
   async checkDateTimeAvailability(params: {
     providerId: string;
-    serviceId: string;
+    serviceId?: string;
     dateTime: string;
+    selfReservation?: boolean;
   }): Promise<{
     success: boolean;
     step: "datetime";
@@ -261,7 +277,17 @@ export class AgentService {
   }> {
     const providerId = params.providerId?.trim();
     const serviceId = params.serviceId?.trim();
-    if (!providerId || !serviceId) {
+    const selfReservation = params.selfReservation === true;
+
+    if (!providerId) {
+      return {
+        success: false,
+        step: "datetime",
+        message: "Anbieter-ID fehlt.",
+      };
+    }
+
+    if (!selfReservation && !serviceId) {
       return {
         success: false,
         step: "datetime",
@@ -278,21 +304,33 @@ export class AgentService {
       };
     }
 
-    const service = await this.resolveServiceForProvider(providerId, serviceId);
-    if (!service) {
-      return {
-        success: false,
-        step: "datetime",
-        message:
-          "Dieser Dienst wurde für den Anbieter nicht gefunden. Bitte wählen Sie einen Dienst aus der Liste.",
-      };
+    let effMin: number;
+    if (selfReservation) {
+      const defDur = await this.selfReservationDefaultDurationMinutes(providerId);
+      effMin =
+        parsedReq.durationMinutes !== undefined
+          ? parsedReq.durationMinutes
+          : defDur;
+    } else {
+      const service = await this.resolveServiceForProvider(
+        providerId,
+        serviceId!,
+      );
+      if (!service) {
+        return {
+          success: false,
+          step: "datetime",
+          message:
+            "Dieser Dienst wurde für den Anbieter nicht gefunden. Bitte wählen Sie einen Dienst aus der Liste.",
+        };
+      }
+      effMin =
+        parsedReq.durationMinutes !== undefined
+          ? parsedReq.durationMinutes
+          : Math.max(1, service.duration);
     }
 
     const start = parsedReq.start;
-    const effMin =
-      parsedReq.durationMinutes !== undefined
-        ? parsedReq.durationMinutes
-        : Math.max(1, service.duration);
     const endParsed = new Date(start.getTime() + effMin * 60 * 1000);
     const overlap = await this.timeSlotService.findOverlappingTimeSlotForProvider(
       providerId,
@@ -314,10 +352,11 @@ export class AgentService {
       parsedReq.durationMinutes !== undefined
         ? ` (${effMin} Min., bis **${endLabel}**)`
         : "";
+    const selfHint = selfReservation ? " (**Selbstbuchung**) " : " ";
     return {
       success: true,
       step: "datetime",
-      message: `Die Zeit **${reqLabel}**${durHint} (Berlin) ist vorbereitet. Antworten Sie mit **ja**, um zu bestätigen.`,
+      message: `Die Zeit **${reqLabel}**${durHint} (Berlin)${selfHint}ist vorbereitet. Antworten Sie mit **ja**, um zu bestätigen.`,
       requestedStartBerlin: reqLabel,
     };
   }
@@ -328,16 +367,26 @@ export class AgentService {
    */
   async confirmBooking(params: {
     dateTime: string;
-    serviceId: string;
+    serviceId?: string;
     customerId: string;
     providerId: string;
+    selfReservation?: boolean;
   }): Promise<{ success: boolean; step: "done"; message: string }> {
     const providerId = params.providerId?.trim();
     const customerId = params.customerId?.trim();
-    const serviceId = params.serviceId?.trim();
+    const serviceId = params.serviceId?.trim() ?? "";
     const dateTimeRaw = params.dateTime?.trim() ?? "";
+    const selfReservation = params.selfReservation === true;
 
-    if (!providerId || !customerId || !serviceId || !dateTimeRaw) {
+    if (!providerId || !dateTimeRaw) {
+      return {
+        success: false,
+        step: "done",
+        message: "Buchungsdaten unvollständig.",
+      };
+    }
+
+    if (!selfReservation && (!customerId || !serviceId)) {
       return {
         success: false,
         step: "done",
@@ -351,6 +400,116 @@ export class AgentService {
         success: false,
         step: "done",
         message: `Ungültiges Datum oder Uhrzeit. ${DATETIME_FORMAT_HELP}`,
+      };
+    }
+
+    const start = parsedReq.start;
+
+    if (selfReservation) {
+      if (customerId !== providerId) {
+        return {
+          success: false,
+          step: "done",
+          message: "Selbstbuchung: Anbieter-ID und Kunden-ID müssen übereinstimmen.",
+        };
+      }
+
+      const provider = await this.prisma.user.findUnique({
+        where: { id: providerId },
+      });
+      if (!provider) {
+        return {
+          success: false,
+          step: "done",
+          message: "Anbieter nicht gefunden.",
+        };
+      }
+
+      const defDur = await this.selfReservationDefaultDurationMinutes(providerId);
+      const effMin =
+        parsedReq.durationMinutes !== undefined
+          ? parsedReq.durationMinutes
+          : defDur;
+
+      const dateStr = formatReservationDateLocal(start);
+      try {
+        await this.serviceService.getAllServicesWithProviderId({
+          provider_id: providerId,
+          start_time: dateStr,
+          end_time: dateStr,
+        });
+      } catch {
+        /* non-fatal */
+      }
+
+      const endParsed = new Date(start.getTime() + effMin * 60 * 1000);
+
+      let slotId: string;
+      let appointmentServiceId: string;
+      try {
+        const created = await this.timeSlotService.createTimeSlots({
+          is_self_reservation: true,
+          provider_id: providerId,
+          customer_id: providerId,
+          start_time: start.toISOString(),
+          end_time: endParsed.toISOString(),
+          name: provider.name,
+          family: provider.family,
+          email: provider.email ?? "",
+          phone: provider.phone,
+          sex: provider.sex,
+          desc: "Chat-Buchung",
+        });
+        slotId = created.slot.id;
+        appointmentServiceId = created.slot.service_id;
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        return {
+          success: false,
+          step: "done",
+          message: `Zeitfenster konnte nicht angelegt werden: ${msg}`,
+        };
+      }
+
+      try {
+        await this.prisma.$transaction([
+          this.prisma.appointment.create({
+            data: {
+              customer_id: providerId,
+              provider_id: providerId,
+              service_id: appointmentServiceId,
+              time_slot_id: slotId,
+              status: StatusEnum.Confirmed,
+              notes: "Chat-Buchung Selbst",
+            },
+          }),
+          this.prisma.timeSlot.update({
+            where: { id: slotId },
+            data: {
+              status: TimeSlotEnum.Booked,
+              customer_id: providerId,
+            },
+          }),
+        ]);
+      } catch {
+        return {
+          success: false,
+          step: "done",
+          message:
+            "Das Zeitfenster wurde angelegt, der Termin konnte aber nicht gespeichert werden. Bitte den Support kontaktieren.",
+        };
+      }
+
+      const when = formatDateTimeBerlin(start);
+      const whenEnd = formatDateTimeBerlin(endParsed);
+      const msg =
+        parsedReq.durationMinutes !== undefined
+          ? `Selbstbuchung bestätigt: ${when} – ${whenEnd} (Berlin, ${effMin} Min.).`
+          : `Selbstbuchung bestätigt: ${when} – ${whenEnd} (Berlin).`;
+      return {
+        success: true,
+        step: "done",
+        message: msg,
       };
     }
 
@@ -374,7 +533,6 @@ export class AgentService {
       };
     }
 
-    const start = parsedReq.start;
     const effMin =
       parsedReq.durationMinutes !== undefined
         ? parsedReq.durationMinutes

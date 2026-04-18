@@ -9,8 +9,8 @@ import { AgentService } from "./agent.service";
 
 /**
  * Chat: `customerName` | `serviceQuery`+`providerId?` |
- * `dateTime`+`serviceId`+`providerId` |
- * `confirmBooking`+`dateTime`+`serviceId`+`customerId`+`providerId`
+ * `dateTime`+`serviceId`+`providerId` | `dateTime`+`providerId`+`selfReservation` (Selbst) |
+ * `confirmBooking`+… (bei Selbst: `selfReservation`, kein `serviceId`)
  */
 export type AgentChatBody = {
   customerName?: string;
@@ -20,6 +20,7 @@ export type AgentChatBody = {
   serviceId?: string;
   confirmBooking?: boolean;
   customerId?: string;
+  selfReservation?: boolean;
 };
 
 @Controller("api")
@@ -32,27 +33,38 @@ export class AgentController {
     if (
       body.confirmBooking === true &&
       typeof body.dateTime === "string" &&
-      body.serviceId &&
-      body.customerId &&
-      body.providerId
+      typeof body.providerId === "string" &&
+      body.providerId.trim() &&
+      (body.selfReservation === true
+        ? true
+        : Boolean(body.serviceId && body.customerId))
     ) {
       return this.agentService.confirmBooking({
         dateTime: body.dateTime,
         serviceId: body.serviceId,
-        customerId: body.customerId,
-        providerId: body.providerId,
+        customerId:
+          body.selfReservation === true
+            ? (typeof body.customerId === "string" && body.customerId.trim()
+                ? body.customerId
+                : body.providerId
+              ).trim()
+            : String(body.customerId ?? "").trim(),
+        providerId: body.providerId.trim(),
+        selfReservation: body.selfReservation === true,
       });
     }
 
     if (
       typeof body.dateTime === "string" &&
-      body.serviceId &&
-      body.providerId
+      typeof body.providerId === "string" &&
+      body.providerId.trim() &&
+      (body.selfReservation === true ? true : Boolean(body.serviceId))
     ) {
       return this.agentService.checkDateTimeAvailability({
-        providerId: body.providerId,
+        providerId: body.providerId.trim(),
         serviceId: body.serviceId,
         dateTime: body.dateTime,
+        selfReservation: body.selfReservation === true,
       });
     }
 
@@ -68,7 +80,7 @@ export class AgentController {
     }
 
     throw new BadRequestException(
-      "Erwartet: customerName, serviceQuery, dateTime mit serviceId und providerId, oder confirmBooking mit dateTime, serviceId, customerId, providerId."
+      "Erwartet: customerName, serviceQuery, dateTime mit serviceId und providerId (oder Selbstbuchung mit selfReservation), oder confirmBooking mit vollständigen Daten."
     );
   }
 }
