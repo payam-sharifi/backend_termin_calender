@@ -52,6 +52,7 @@ export class ServiceService {
           }
         }
       },
+      orderBy: { title: "asc" },
       include:{
         user:{
           select:{name:true}
