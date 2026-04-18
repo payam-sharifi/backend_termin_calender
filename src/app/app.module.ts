@@ -13,6 +13,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { ReminderModule } from "src/reminder/reminder.module";
 import { OtpModule } from "src/otp/otp.module";
 import { BackupModule } from "src/backup/backup.module";
+import { ChatModule } from "src/chat/chat.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { BackupModule } from "src/backup/backup.module";
     AuthModule,
     SmsModule,
     OtpModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

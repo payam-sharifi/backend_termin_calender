@@ -6,7 +6,12 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 import { CreateUserDto, FindUserDto, UpdateUserDto } from "./Dtos";
-import { Prisma, RoleEnum } from "@prisma/client";
+import { Prisma, RoleEnum, Sex } from "@prisma/client";
+
+/** Trim and collapse internal whitespace for consistent DB matching. */
+function normalizePersonName(s: string): string {
+  return s.trim().replace(/\s+/g, " ");
+}
 
 @Injectable()
 export class UserService {
@@ -90,6 +95,29 @@ export class UserService {
       pageSize: take,
       totalPages: Math.ceil(total / take),
     };
+  }
+
+  /**
+   * Intake: find a customer by `User.name` + `User.family` (DB columns).
+   * Must succeed before booking; maps AI firstName → name, lastName → family.
+   */
+  async findCustomerByNameAndFamily(
+    name: string,
+    family: string
+  ): Promise<{ id: string; sex: Sex } | null> {
+    const n = normalizePersonName(name);
+    const f = normalizePersonName(family);
+    if (!n || !f) {
+      return null;
+    }
+    return this.prisma.user.findFirst({
+      where: {
+        role: RoleEnum.Customer,
+        name: { equals: n, mode: "insensitive" },
+        family: { equals: f, mode: "insensitive" },
+      },
+      select: { id: true, sex: true },
+    });
   }
 
   //  Get one or multiple users by optional filters

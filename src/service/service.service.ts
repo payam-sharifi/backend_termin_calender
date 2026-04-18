@@ -153,6 +153,72 @@ export class ServiceService {
     });
   }
 
+  /**
+   * Intake: resolve service by name — exact title match first, then contains.
+   */
+  /** List active bookable services for intake error responses. */
+  async listActiveServicesForIntake(): Promise<{ id: string; title: string }[]> {
+    return this.prisma.service.findMany({
+      where: {
+        is_active: true,
+        NOT: { title: { startsWith: "___SELF_RESERVATION___" } },
+      },
+      select: { id: true, title: true },
+      orderBy: { title: "asc" },
+      take: 40,
+    });
+  }
+
+  async resolveServiceForIntake(serviceQuery: string): Promise<
+    | { kind: "none" }
+    | { kind: "unique"; id: string; title: string; provider_id: string }
+    | { kind: "many"; services: { id: string; title: string }[] }
+  > {
+    const q = serviceQuery.trim();
+    if (!q) return { kind: "none" };
+
+    const exact = await this.prisma.service.findFirst({
+      where: {
+        is_active: true,
+        NOT: { title: { startsWith: "___SELF_RESERVATION___" } },
+        title: { equals: q, mode: "insensitive" },
+      },
+      select: { id: true, title: true, provider_id: true },
+    });
+    if (exact) {
+      return {
+        kind: "unique",
+        id: exact.id,
+        title: exact.title,
+        provider_id: exact.provider_id,
+      };
+    }
+
+    const list = await this.prisma.service.findMany({
+      where: {
+        is_active: true,
+        NOT: { title: { startsWith: "___SELF_RESERVATION___" } },
+        title: { contains: q, mode: "insensitive" },
+      },
+      select: { id: true, title: true, provider_id: true },
+      take: 25,
+    });
+
+    if (list.length === 0) return { kind: "none" };
+    if (list.length === 1) {
+      return {
+        kind: "unique",
+        id: list[0].id,
+        title: list[0].title,
+        provider_id: list[0].provider_id,
+      };
+    }
+    return {
+      kind: "many",
+      services: list.map((s) => ({ id: s.id, title: s.title })),
+    };
+  }
+
   async deleteServiceById(id: string) {
     try {
       return await this.prisma.service.delete({

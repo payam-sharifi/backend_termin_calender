@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -35,13 +36,16 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "crypto": "^1.0.1",
+    "luxon": "^3.7.2",
+    "openai": "^6.34.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "twilio": "^5.7.1",
-    "yarn": "^1.22.22"
+    "yarn": "^1.22.22",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -55,6 +59,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
+    "@types/luxon": "^3.7.1",
     "@types/node": "^22.15.32",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
