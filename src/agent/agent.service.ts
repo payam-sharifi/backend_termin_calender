@@ -6,6 +6,7 @@ import { TimeSlotService } from "src/time-slot/timeslot.service";
 import {
   DATETIME_FORMAT_HELP,
   formatDateTimeBerlin,
+  formatReservationDateLocal,
   parseReservationDateTime,
 } from "./reservation-datetime";
 
@@ -365,7 +366,7 @@ export class AgentService {
       };
     }
 
-    const dateStr = dateTimeRaw.slice(0, 10);
+    const dateStr = formatReservationDateLocal(parsed);
     try {
       await this.serviceService.getAllServicesWithProviderId({
         provider_id: providerId,
