@@ -68,7 +68,7 @@ export class AgentController {
     }
 
     throw new BadRequestException(
-      "Send customerName, or serviceQuery, or dateTime with serviceId and providerId, or confirmBooking with dateTime, serviceId, customerId, providerId."
+      "Erwartet: customerName, serviceQuery, dateTime mit serviceId und providerId, oder confirmBooking mit dateTime, serviceId, customerId, providerId."
     );
   }
 }

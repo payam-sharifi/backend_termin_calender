@@ -45,4 +45,4 @@ export function formatDateTimeBerlin(d: Date): string {
 }
 
 export const DATETIME_FORMAT_HELP =
-  "Use exactly this format (24-hour clock, Europe/Berlin): YYYY-MM-DD HH:mm — example: 2026-04-18 14:30";
+  "Bitte genau dieses Format nutzen (24-Stunden-Uhr, Europe/Berlin): JJJJ-MM-TT HH:mm — Beispiel: 2026-04-18 14:30";

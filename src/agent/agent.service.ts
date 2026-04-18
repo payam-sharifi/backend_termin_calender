@@ -66,7 +66,7 @@ export class AgentService {
         success: false,
         found: false,
         step: "customer",
-        message: "Please enter a customer name.",
+        message: "Bitte geben Sie einen Kundennamen ein.",
       };
     }
 
@@ -118,7 +118,7 @@ export class AgentService {
         found: false,
         step: "customer",
         message:
-          "No customer was found with that name in our system. Please check spelling or use the full first and last name if possible.",
+          "Zu diesem Namen wurde kein Kunde gefunden. Bitte Schreibweise prüfen oder Vor- und Nachnamen vollständig eingeben.",
         customers: [],
       };
     }
@@ -130,7 +130,7 @@ export class AgentService {
         success: true,
         found: true,
         step: "customer",
-        message: `We found this customer: ${full}. Next, choose a service for them.`,
+        message: `Kunde gefunden: ${full}. Bitte wählen Sie als Nächstes einen Dienst.`,
         customers,
       };
     }
@@ -144,7 +144,7 @@ export class AgentService {
       found: true,
       step: "customer",
       message:
-        "Multiple customers match. Each row is numbered — reply with that number (1, 2, …) to select, or type a new name to search again.",
+        "Mehrere Kunden passen. Jede Zeile ist nummeriert — antworten Sie mit dieser Nummer (1, 2, …) oder geben Sie einen neuen Namen ein.",
       customers,
       alternatives,
     };
@@ -172,7 +172,7 @@ export class AgentService {
         found: false,
         step: "service",
         message:
-          "Provider is required to list services. Pass providerId or open the app with ?providerId=… in the URL.",
+          "Zur Anzeige der Dienste wird eine Anbieter-ID benötigt (?providerId=… in der URL oder providerId mitsenden).",
         services: [],
         alternatives: [],
       };
@@ -209,7 +209,7 @@ export class AgentService {
         found: false,
         step: "service",
         message:
-          "No service matches that search. Try another word (e.g. part of the name) or leave the search empty to see the full list.",
+          "Kein Dienst passt zur Suche. Versuchen Sie ein anderes Wort oder lassen Sie die Suche leer für die vollständige Liste.",
         services: [],
         alternatives: [],
       };
@@ -226,7 +226,7 @@ export class AgentService {
         success: true,
         found: true,
         step: "service",
-        message: `One service matches. Type 1 to confirm, or search again with other words.`,
+        message: `Ein Dienst passt. Geben Sie **1** ein zur Auswahl, oder suchen Sie mit anderen Wörtern.`,
         services,
         alternatives,
       };
@@ -238,8 +238,8 @@ export class AgentService {
       step: "service",
       message:
         q.length > 0
-          ? "Matching services — reply with a number (1, 2, …) to choose, or type new words to narrow the list."
-          : "All services — reply with a number (1, 2, …) to choose, or type a word to filter the list.",
+          ? "Passende Dienste — antworten Sie mit einer Nummer (1, 2, …) oder geben Sie neue Suchwörter ein."
+          : "Alle Dienste — antworten Sie mit einer Nummer (1, 2, …) oder filtern Sie mit einem Suchwort.",
       services,
       alternatives,
     };
@@ -264,7 +264,7 @@ export class AgentService {
       return {
         success: false,
         step: "datetime",
-        message: "Provider and service are required.",
+        message: "Anbieter und Dienst sind erforderlich.",
       };
     }
 
@@ -273,7 +273,7 @@ export class AgentService {
       return {
         success: false,
         step: "datetime",
-        message: `Invalid date/time. ${DATETIME_FORMAT_HELP}`,
+        message: `Ungültiges Datum oder Uhrzeit. ${DATETIME_FORMAT_HELP}`,
       };
     }
 
@@ -283,7 +283,7 @@ export class AgentService {
         success: false,
         step: "datetime",
         message:
-          "That service was not found for this provider. Choose a service from the list and try again.",
+          "Dieser Dienst wurde für den Anbieter nicht gefunden. Bitte wählen Sie einen Dienst aus der Liste.",
       };
     }
 
@@ -300,7 +300,7 @@ export class AgentService {
         success: false,
         step: "datetime",
         message:
-          "This time overlaps an existing appointment. Please choose another time.",
+          "Diese Zeit überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit.",
       };
     }
 
@@ -308,7 +308,7 @@ export class AgentService {
     return {
       success: true,
       step: "datetime",
-      message: `Time **${reqLabel}** (Berlin) is ready to book. Reply **yes** to confirm.`,
+      message: `Die Zeit **${reqLabel}** (Berlin) ist vorbereitet. Antworten Sie mit **ja**, um zu bestätigen.`,
       requestedStartBerlin: reqLabel,
     };
   }
@@ -332,7 +332,7 @@ export class AgentService {
       return {
         success: false,
         step: "done",
-        message: "Missing booking data.",
+        message: "Buchungsdaten unvollständig.",
       };
     }
 
@@ -341,7 +341,7 @@ export class AgentService {
       return {
         success: false,
         step: "done",
-        message: `Invalid date/time. ${DATETIME_FORMAT_HELP}`,
+        message: `Ungültiges Datum oder Uhrzeit. ${DATETIME_FORMAT_HELP}`,
       };
     }
 
@@ -350,7 +350,7 @@ export class AgentService {
       return {
         success: false,
         step: "done",
-        message: "Service not found for this provider.",
+        message: "Dienst für diesen Anbieter nicht gefunden.",
       };
     }
 
@@ -361,7 +361,7 @@ export class AgentService {
       return {
         success: false,
         step: "done",
-        message: "Customer not found.",
+        message: "Kunde nicht gefunden.",
       };
     }
 
@@ -392,7 +392,7 @@ export class AgentService {
         email: customer.email ?? "",
         phone: customer.phone,
         sex: customer.sex,
-        desc: "Chat reservation",
+        desc: "Chat-Buchung",
       });
       slotId = created.slot.id;
     } catch (e: unknown) {
@@ -400,7 +400,7 @@ export class AgentService {
       return {
         success: false,
         step: "done",
-        message: `Could not create the time slot: ${msg}`,
+        message: `Zeitfenster konnte nicht angelegt werden: ${msg}`,
       };
     }
 
@@ -413,7 +413,7 @@ export class AgentService {
             service_id: service.id,
             time_slot_id: slotId,
             status: StatusEnum.Confirmed,
-            notes: "Chat reservation",
+            notes: "Chat-Buchung",
           },
         }),
         this.prisma.timeSlot.update({
@@ -429,7 +429,7 @@ export class AgentService {
         success: false,
         step: "done",
         message:
-          "The time slot was created but saving the appointment failed. Please contact support.",
+          "Das Zeitfenster wurde angelegt, der Termin konnte aber nicht gespeichert werden. Bitte den Support kontaktieren.",
       };
     }
 
@@ -437,7 +437,7 @@ export class AgentService {
     return {
       success: true,
       step: "done",
-      message: `Booking is confirmed for ${when} (Berlin).`,
+      message: `Buchung bestätigt für ${when} (Berlin).`,
     };
   }
 }
