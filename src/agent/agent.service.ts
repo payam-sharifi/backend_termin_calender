@@ -7,7 +7,7 @@ import {
   DATETIME_FORMAT_HELP,
   formatDateTimeBerlin,
   formatReservationDateLocal,
-  parseReservationDateTime,
+  parseReservationRequest,
 } from "./reservation-datetime";
 
 type CustomerSummary = {
@@ -269,8 +269,8 @@ export class AgentService {
       };
     }
 
-    const parsed = parseReservationDateTime(params.dateTime ?? "");
-    if (!parsed) {
+    const parsedReq = parseReservationRequest(params.dateTime ?? "");
+    if (!parsedReq) {
       return {
         success: false,
         step: "datetime",
@@ -288,12 +288,15 @@ export class AgentService {
       };
     }
 
-    const endParsed = new Date(
-      parsed.getTime() + Math.max(1, service.duration) * 60 * 1000
-    );
+    const start = parsedReq.start;
+    const effMin =
+      parsedReq.durationMinutes !== undefined
+        ? parsedReq.durationMinutes
+        : Math.max(1, service.duration);
+    const endParsed = new Date(start.getTime() + effMin * 60 * 1000);
     const overlap = await this.timeSlotService.findOverlappingTimeSlotForProvider(
       providerId,
-      parsed,
+      start,
       endParsed
     );
     if (overlap) {
@@ -305,11 +308,16 @@ export class AgentService {
       };
     }
 
-    const reqLabel = formatDateTimeBerlin(parsed);
+    const reqLabel = formatDateTimeBerlin(start);
+    const endLabel = formatDateTimeBerlin(endParsed);
+    const durHint =
+      parsedReq.durationMinutes !== undefined
+        ? ` (${effMin} Min., bis **${endLabel}**)`
+        : "";
     return {
       success: true,
       step: "datetime",
-      message: `Die Zeit **${reqLabel}** (Berlin) ist vorbereitet. Antworten Sie mit **ja**, um zu bestätigen.`,
+      message: `Die Zeit **${reqLabel}**${durHint} (Berlin) ist vorbereitet. Antworten Sie mit **ja**, um zu bestätigen.`,
       requestedStartBerlin: reqLabel,
     };
   }
@@ -337,8 +345,8 @@ export class AgentService {
       };
     }
 
-    const parsed = parseReservationDateTime(dateTimeRaw);
-    if (!parsed) {
+    const parsedReq = parseReservationRequest(dateTimeRaw);
+    if (!parsedReq) {
       return {
         success: false,
         step: "done",
@@ -366,7 +374,13 @@ export class AgentService {
       };
     }
 
-    const dateStr = formatReservationDateLocal(parsed);
+    const start = parsedReq.start;
+    const effMin =
+      parsedReq.durationMinutes !== undefined
+        ? parsedReq.durationMinutes
+        : Math.max(1, service.duration);
+
+    const dateStr = formatReservationDateLocal(start);
     try {
       await this.serviceService.getAllServicesWithProviderId({
         provider_id: providerId,
@@ -377,16 +391,14 @@ export class AgentService {
       /* non-fatal — same as optional context load */
     }
 
-    const endParsed = new Date(
-      parsed.getTime() + Math.max(1, service.duration) * 60 * 1000
-    );
+    const endParsed = new Date(start.getTime() + effMin * 60 * 1000);
 
     let slotId: string;
     try {
       const created = await this.timeSlotService.createTimeSlots({
         customer_id: customerId,
         service_id: service.id,
-        start_time: parsed.toISOString(),
+        start_time: start.toISOString(),
         end_time: endParsed.toISOString(),
         name: customer.name,
         family: customer.family,
@@ -434,11 +446,16 @@ export class AgentService {
       };
     }
 
-    const when = formatDateTimeBerlin(parsed);
+    const when = formatDateTimeBerlin(start);
+    const whenEnd = formatDateTimeBerlin(endParsed);
+    const msg =
+      parsedReq.durationMinutes !== undefined
+        ? `Buchung bestätigt: ${when} – ${whenEnd} (Berlin, ${effMin} Min.).`
+        : `Buchung bestätigt: ${when} – ${whenEnd} (Berlin).`;
     return {
       success: true,
       step: "done",
-      message: `Buchung bestätigt für ${when} (Berlin).`,
+      message: msg,
     };
   }
 }
