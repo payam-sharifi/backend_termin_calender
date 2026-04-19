@@ -23,6 +23,7 @@ jobs:
           timeout: 5m  # Correct parameter name
           script: |
             cd /termin/pwa-termin/server
+            git stash
             git pull 
             npm install
             npm run build
