@@ -23,11 +23,12 @@ export type AgentChatBody = {
   selfReservation?: boolean;
 };
 
-@Controller("api")
+/** POST `/chat` — public URL often `/api/chat` (nginx strips `/api/` before proxy). */
+@Controller("chat")
 export class AgentController {
   constructor(private readonly agentService: AgentService) {}
 
-  @Post("chat")
+  @Post()
   @HttpCode(200)
   async reservation(@Body() body: AgentChatBody) {
     if (
