@@ -14,9 +14,10 @@ export class CreateUserDto {
   @IsString({ message: 'Der Name muss ein Text sein.' })
   name: string;
 
-  @ApiProperty({ example: "family" })
+  @ApiProperty({ example: "family", required: false })
+  @IsOptional()
   @IsString({ message: 'Der Nachname muss ein Text sein.' })
-  family: string;
+  family?: string;
 
   @ApiProperty({ example: "example@email.com" })
   @IsOptional()

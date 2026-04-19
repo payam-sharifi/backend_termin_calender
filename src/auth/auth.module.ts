@@ -30,6 +30,6 @@ import { SmsModule } from 'src/sms/sms.module';
       }),
     }),
   ],
-  exports: [PassportModule, JwtModule],
+  exports: [PassportModule, JwtModule, AuthService],
 })
 export class AuthModule {}

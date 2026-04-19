@@ -9,6 +9,7 @@ import { SmsModule } from 'src/sms/sms.module';
 @Module({
   providers: [TimeSlotService],
   controllers: [TimeSlotController],
-  imports:[ScheduleModule,PrismaModule,SmsModule]
+  imports: [ScheduleModule, PrismaModule, SmsModule],
+  exports: [TimeSlotService],
 })
 export class TimeSlotModule {}

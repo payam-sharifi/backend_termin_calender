@@ -13,6 +13,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { ReminderModule } from "src/reminder/reminder.module";
 import { OtpModule } from "src/otp/otp.module";
 import { BackupModule } from "src/backup/backup.module";
+import { AgentModule } from "../agent/agent.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +21,7 @@ import { BackupModule } from "src/backup/backup.module";
     }),
     ScheduleModule.forRoot(),
     UserModule,
+    AgentModule,
     OtpModule,
     BackupModule,
     ReminderModule,
