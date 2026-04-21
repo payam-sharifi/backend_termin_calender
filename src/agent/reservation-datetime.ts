@@ -3,8 +3,17 @@
  * Example: `2026-04-21 10:00 00:30` → start 10:00, duration 30 min (ends 10:30).
  * Without a third `HH:mm` segment, duration is omitted (caller uses service default).
  *
- * Also supports short dates (local system calendar) — see DATETIME_FORMAT_HELP.
+ * Typed dates without `Z`/offset are **Europe/Berlin** civil time (salon time), not the
+ * host OS zone — production servers are usually UTC; using `new Date(y,m,d,h,mi)`
+ * there shifted chat bookings by +2h in summer vs German users’ intent.
+ *
+ * ISO strings with `Z` or offset match `POST /timeslot` / `toISOString()` behavior.
  */
+
+import { DateTime } from "luxon";
+
+/** Wall clock for natural-language / typed chat input (same as business locale). */
+export const RESERVATION_ZONE = "Europe/Berlin";
 
 const FULL_DT_RE =
   /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})$/;
@@ -29,20 +38,17 @@ function tryBuild(
   if (mo < 1 || mo > 12 || d < 1 || d > 31 || h > 23 || mi > 59) {
     return null;
   }
-  const dt = new Date(y, mo - 1, d, h, mi, 0, 0);
-  if (
-    dt.getFullYear() !== y ||
-    dt.getMonth() !== mo - 1 ||
-    dt.getDate() !== d
-  ) {
-    return null;
-  }
-  return dt;
+  const dt = DateTime.fromObject(
+    { year: y, month: mo, day: d, hour: h, minute: mi },
+    { zone: RESERVATION_ZONE },
+  );
+  if (!dt.isValid) return null;
+  return dt.toJSDate();
 }
 
 function systemYearMonth(): { y: number; m: number } {
-  const now = new Date();
-  return { y: now.getFullYear(), m: now.getMonth() + 1 };
+  const now = DateTime.now().setZone(RESERVATION_ZONE);
+  return { y: now.year, m: now.month };
 }
 
 /** `HH:mm` as duration length: hours + minutes (e.g. 00:30 → 30). */
@@ -135,11 +141,28 @@ function parseRestWithStartTime(
   return null;
 }
 
+/** Same absolute instant as dashboard `start_time` / `toISOString()` (UTC `Z` or offset). */
+function tryParseApiStyleInstant(raw: string): ParsedReservationDateTime | null {
+  const t = raw.trim();
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(t)) return null;
+  const hasExplicitZone =
+    /Z$/i.test(t) ||
+    /[+-]\d{2}:\d{2}$/.test(t) ||
+    /[+-]\d{4}$/.test(t);
+  if (!hasExplicitZone) return null;
+  const dt = DateTime.fromISO(t, { setZone: true });
+  if (!dt.isValid) return null;
+  return { start: dt.toJSDate(), durationMinutes: undefined };
+}
+
 export function parseReservationRequest(
   raw: string,
 ): ParsedReservationDateTime | null {
   const s0 = raw.trim();
   if (!s0) return null;
+
+  const fromIso = tryParseApiStyleInstant(s0);
+  if (fromIso) return fromIso;
 
   const peeled = peelTrailingTimes(s0);
   if (peeled === null) return null;
@@ -209,9 +232,11 @@ export function formatDateTimeBerlin(d: Date): string {
   });
 }
 
+/** Calendar day in Berlin for this instant (service-day queries). */
 export function formatReservationDateLocal(d: Date): string {
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const z = DateTime.fromJSDate(d).setZone(RESERVATION_ZONE);
+  return `${z.year}-${pad2(z.month)}-${pad2(z.day)}`;
 }
 
 export const DATETIME_FORMAT_HELP =
-  "Zulässig: JJJJ-MM-TT HH:mm optional gefolgt von **Dauer** als HH:mm (z. B. `2026-04-21 10:00 00:30` = 30 Min.; ohne Dauer gilt die Dauer des Dienstes). Außerdem: nur JJJJ-MM-TT (09:00), kurz eine Zahl = Tag, zwei Zahlen = Tag/Monat (Jahr vom System), z. B. `18 14:30`, `15 4`, `15.4` — optional zwei Zeiten am Ende: Start und Dauer.";
+  "Zulässig: ISO mit Zone wie **POST /timeslot** (`…T…Z`), oder **Europe/Berlin**: JJJJ-MM-TT HH:mm optional + **Dauer** HH:mm (z. B. `2026-04-21 10:00 00:30`). Außerdem: nur JJJJ-MM-TT (09:00), kurz Tag/Monat (Jahr aus „jetzt“ Berlin) — optional Start und Dauer.";
