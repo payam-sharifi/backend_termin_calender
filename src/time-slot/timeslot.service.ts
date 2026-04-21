@@ -238,17 +238,15 @@ return false
 
 
 
-  async deleteTimeSlotsById(id: string,phone:string) {
-   
+  async deleteTimeSlotsById(id: string, phone: string) {
     try {
-      const res= await this.prisma.timeSlot.delete({
-        where: { id },
+      await this.prisma.$transaction(async (tx) => {
+        await tx.appointment.deleteMany({ where: { time_slot_id: id } });
+        await tx.timeSlot.delete({ where: { id } });
       });
-      if(res){
-       // const text = `Ihr Termin wurde abgesagt.`;
-       // const smssent= await this.smsService.sendTwilioSms(phone, text);
-        return true
-      }//else return false
+      // const text = `Ihr Termin wurde abgesagt.`;
+      // const smssent= await this.smsService.sendTwilioSms(phone, text);
+      return true;
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundException(
