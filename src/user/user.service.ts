@@ -54,9 +54,28 @@ export class UserService {
     return user;
   }
 
-  // ✅ Get all users with pagination
-  async GetAllUsers(role?: RoleEnum, search?: string, skip = 0, take = 10) {
-    const whereClause: any = {};
+  // ✅ Get all users for a provider with pagination (never list users without a provider_id)
+  async GetAllUsers(
+    provider_id: string | undefined,
+    role?: RoleEnum,
+    search?: string,
+    skip = 0,
+    take = 10
+  ) {
+    const id = provider_id?.trim();
+    if (!id) {
+      return {
+        data: [],
+        total: 0,
+        page: Math.floor(skip / take) + 1,
+        pageSize: take,
+        totalPages: 0,
+      };
+    }
+
+    const whereClause: Prisma.UserWhereInput = {
+      provider_id: id,
+    };
 
     if (role) {
       whereClause.role = role;

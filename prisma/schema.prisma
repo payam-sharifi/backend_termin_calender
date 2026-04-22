@@ -58,6 +58,10 @@ model User {
   is_verified          Boolean
   created_at           DateTime      @default(now())
   updated_at           DateTime      @updatedAt
+  // Optional: customer (and similar) users created under a given provider
+  provider_id         String?
+  accountProvider     User?         @relation("ProviderManagedUsers", fields: [provider_id], references: [id])
+  managedByThisProvider User[]      @relation("ProviderManagedUsers")
   service              Service[]
   timeslot              TimeSlot[]
   schedule             Schedule[]

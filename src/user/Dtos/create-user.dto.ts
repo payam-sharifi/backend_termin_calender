@@ -7,12 +7,17 @@ import {
   IsEmail,
   Length,
   IsPhoneNumber,
+  IsUUID,
 } from "class-validator";
 
 export class CreateUserDto {
   @ApiProperty({ example: "name" })
   @IsString({ message: 'Der Name muss ein Text sein.' })
   name: string;
+
+  @IsUUID(4, { message: 'Der Provider ID muss ein gültige UUID sein.' })
+  @IsString({ message: 'Der Provider ID muss ein Text sein.' })
+  provider_id: string;
 
   @ApiProperty({ example: "family", required: false })
   @IsOptional()

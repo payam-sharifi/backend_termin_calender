@@ -16,6 +16,7 @@ import { CreateUserDto, UpdateUserDto } from "./Dtos";
 import { RoleEnum } from "@prisma/client";
 import { ApiResponseType } from "../common/response.interface"
 import { ApiTags, ApiQuery, ApiResponse as SwaggerResponse } from "@nestjs/swagger";
+import { UUID } from "crypto";
 
 @ApiTags("Users")
 @Controller("/user")
@@ -30,11 +31,13 @@ export class UserController {
   }
 
   @Get()
+  @ApiQuery({ name: "provider_id", required: true })
   @ApiQuery({ name: "search", required: false })
   @ApiQuery({ name: "role", required: false })
   @ApiQuery({ name: "page", required: false })
   @ApiQuery({ name: "limit", required: false })
   async getAllUser(
+    @Query("provider_id") provider_id: string,
     @Query("search") search?: string,
     @Query("role") role?: string,
     @Query("page") page = 1,
@@ -50,7 +53,7 @@ export class UserController {
     const pageSize = Math.max(Number(limit) || 10, 1);
     const skip = (pageNumber - 1) * pageSize;
 
-    const result = await this.userService.GetAllUsers(validRole, search, skip, pageSize);
+    const result = await this.userService.GetAllUsers(provider_id, validRole, search, skip, pageSize);
 
     return {
       success: true,
