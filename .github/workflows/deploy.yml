@@ -2,7 +2,7 @@ name: Deploy nest.js to Server
 
 on:
   push:
-    branches: [ mockpwa ]
+    branches: [dev]
 
 jobs:
   deploy:
@@ -22,12 +22,12 @@ jobs:
           port: 22
           timeout: 5m  # Correct parameter name
           script: |
-            cd /termin/pwa-termin/server
+            cd /termin/test_termin/backend_termin_calender
             git stash
             git pull 
             npm install
             npm run build
-            pm2 delete pwa-termin-backend || true
-            PORT=4002 pm2 start /termin/pwa-termin/server/dist/src/main.js --name "pwa-termin-backend"
+            pm2 delete test-termin-backend || true
+            PORT=4102 pm2 start /termin/test_termin/backend_termin_calender/dist/src/main.js --name "test-termin-backend"
             pm2 save
             pm2 startup
