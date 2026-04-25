@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
-import { CreateUserDto } from "src/user/Dtos";
+import { RegisterUserDto } from "src/user/Dtos";
 import * as bcrypt from "bcrypt";
 import { UpdateAuthDto } from "./Dtos/UpdateAuthDto";
 import { OtpService } from "src/otp/otp.service";
@@ -16,9 +16,7 @@ export class AuthService {
     private readonly otpService: OtpService
   ) {}
   //create user/
-  async create(dataRq: CreateUserDto) {
-    const salt = await bcrypt.genSalt();
-
+  async create(dataRq: RegisterUserDto) {
     const hashPassword = await bcrypt.hash(dataRq.password, 10);
     //must refactor
     // const isUser = await this.prisma.user.findFirst({
@@ -35,6 +33,10 @@ export class AuthService {
         role: dataRq.role,
         is_verified: dataRq.is_verified,
         email: dataRq.email,
+        ...(dataRq.provider_id != null &&
+        String(dataRq.provider_id).trim() !== ""
+          ? { provider_id: dataRq.provider_id }
+          : {}),
       },
       select: {
         name: true,

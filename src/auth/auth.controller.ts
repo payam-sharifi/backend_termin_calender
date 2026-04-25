@@ -10,7 +10,7 @@ import {
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { CreateUserDto } from "src/user/Dtos";
+import { RegisterUserDto } from "src/user/Dtos";
 import { AuthService } from "./auth.service";
 import { LoginUserDto } from "./Dtos/login.dto";
 import { JwtService } from "@nestjs/jwt";
@@ -40,9 +40,9 @@ export class AuthController {
 
   @Post("/register")
   @ApiOperation({ summary: "Register a new user" })
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: RegisterUserDto })
   @ApiResponse({ status: 201, description: "User created successfully" })
-  async register(@Body() body: CreateUserDto) {
+  async register(@Body() body: RegisterUserDto) {
     // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { phone: body.phone },
