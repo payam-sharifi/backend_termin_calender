@@ -7,6 +7,7 @@ import {
 import { PrismaService } from "prisma/prisma.service";
 import { CreateUserDto, FindUserDto, UpdateUserDto } from "./Dtos";
 import { Prisma, RoleEnum } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -170,9 +171,15 @@ export class UserService {
       throw new NotFoundException("User not found.");
     }
 
+    const { password, ...rest } = dto;
+    const data: Prisma.UserUpdateInput = { ...rest };
+    if (password != null && String(password).length > 0) {
+      data.password = await bcrypt.hash(password, 10);
+    }
+
     const updated = await this.prisma.user.update({
       where: { id },
-      data: dto,
+      data,
     });
 
     return updated;
