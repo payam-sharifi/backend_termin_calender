@@ -98,17 +98,26 @@ export class PWAInterceptor implements NestInterceptor {
    * Check if route is public (can be cached)
    */
   private isPublicRoute(path: string): boolean {
-    // Add routes that should be cached
-    const publicRoutes = [
-      '/service',
-      '/schedule',
-      '/time-slot',
-    ];
-
     // Exclude auth routes
     if (path.startsWith('/auth') || path.startsWith('/user')) {
       return false;
     }
+
+    // Provider-specific catalog: GET /service/:providerId must not use long-lived public cache.
+    // Stale empty payloads break Dienstverwaltung after POST /service/create (clients refetch GET).
+    const serviceSubPath = path.startsWith('/service/')
+      ? path.slice('/service/'.length).split('/')[0]
+      : '';
+    if (
+      path.startsWith('/service/') &&
+      serviceSubPath &&
+      serviceSubPath !== 'create'
+    ) {
+      return false;
+    }
+
+    // Add routes that should be cached
+    const publicRoutes = ['/service', '/schedule', '/time-slot'];
 
     return publicRoutes.some((route) => path.startsWith(route));
   }
