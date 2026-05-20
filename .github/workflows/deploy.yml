@@ -27,7 +27,7 @@ jobs:
             git pull 
             npm install
             npm run build
-            pm2 delete pwa-termin-backend || true
+            pm2 delete hengameh-termin-backend || true
             PORT=4002 pm2 start /termin/pwa-termin/server/dist/src/main.js --name "hengameh-termin-backend"
             pm2 save
             pm2 startup
