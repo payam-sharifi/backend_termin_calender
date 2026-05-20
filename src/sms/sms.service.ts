@@ -10,22 +10,25 @@ export class SmsService {
       process.env.TWILIO_AUTH_TOKEN,
     );
   }
-  private apiKey = process.env.SEVEN_API_KEY!;
-  private sender = process.env.SEVEN_SENDER || 'TerminApp';
+  private apiKey = process.env.EASYSENDSMS_API_KEY!;
+  private sender = process.env.SMS_SENDER || 'TerminApp';
 
   async sendTwilioSms(to: string, text: string): Promise<void> {
-    const url = 'https://gateway.seven.io/api/sms';
+    const url = process.env.SMS_URL!;
 
-    const params = new URLSearchParams();
-    params.append('to', to);
-    params.append('text', text);
-    params.append('from', this.sender);
-    params.append('p', this.apiKey); 
+    const body = {
+      to,
+      text,
+      from: this.sender,
+      type: '0',
+    };
 
     try {
-      const response = await axios.post(url, params.toString(), {
+      const response = await axios.post(url, body, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          apikey: this.apiKey,
         },
       });
       console.log('SMS sent:', response.data);

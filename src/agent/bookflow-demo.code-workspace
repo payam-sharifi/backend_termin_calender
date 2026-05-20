@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../bookflow-demo"
+		},
+		{
+			"path": "../../../../projects/appventure_frontend"
+		},
+		{
+			"path": "../../../termin_calender"
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {}
+}
