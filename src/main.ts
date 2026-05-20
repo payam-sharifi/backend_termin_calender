@@ -12,6 +12,7 @@ import { ConfigService } from "@nestjs/config";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter";
 import { PWAInterceptor } from "./common/pwa.interceptor";
 
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
