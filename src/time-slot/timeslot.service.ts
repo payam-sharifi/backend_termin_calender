@@ -16,19 +16,17 @@ import { GetUserTimeSlotsDto } from "./Dtos/getUserTimeSlots.dto";
 /** Parses slot bounds; throws BadRequestException if invalid or start >= end. */
 function parseIntervalOrThrow(
   startRaw: string,
-  endRaw: string
+  endRaw: string,
 ): { start: Date; end: Date } {
   const start = new Date(startRaw);
   const end = new Date(endRaw);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     throw new BadRequestException(
-      "Ungültiges Start- oder Enddatum. Erwartet wird ein gültiges Datum/Zeit-Format (z. B. ISO 8601)."
+      "Ungültiges Start- oder Enddatum. Erwartet wird ein gültiges Datum/Zeit-Format (z. B. ISO 8601).",
     );
   }
   if (start.getTime() >= end.getTime()) {
-    throw new BadRequestException(
-      "Die Startzeit muss vor der Endzeit liegen."
-    );
+    throw new BadRequestException("Die Startzeit muss vor der Endzeit liegen.");
   }
   return { start, end };
 }
@@ -37,7 +35,7 @@ function parseIntervalOrThrow(
 export class TimeSlotService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly smsService: SmsService
+    private readonly smsService: SmsService,
   ) {}
 
   /**
@@ -48,7 +46,7 @@ export class TimeSlotService {
     providerId: string,
     start: Date,
     end: Date,
-    excludeTimeSlotId?: string
+    excludeTimeSlotId?: string,
   ) {
     return this.prisma.timeSlot.findFirst({
       where: {
@@ -76,13 +74,12 @@ export class TimeSlotService {
       // },
     });
   }
-  
+
   async createTimeSlots(body: CreateTimeSlotDto) {
- 
     try {
       var costumerId: string | null = null;
       var serviceIdToUse: string;
-      
+
       // If it's a self-reservation, get or create default service
       if (body.is_self_reservation && body.provider_id) {
         const defaultServiceTitle = `___SELF_RESERVATION___${body.provider_id}`;
@@ -92,7 +89,7 @@ export class TimeSlotService {
             provider_id: body.provider_id,
           },
         });
-        
+
         if (!defaultService) {
           // Create default service for self-reservation
           defaultService = await this.prisma.service.create({
@@ -107,13 +104,15 @@ export class TimeSlotService {
             },
           });
         }
-        
+
         serviceIdToUse = defaultService.id;
         costumerId = body.provider_id; // Use provider_id as customer_id for self-reservation
       } else {
         // For regular reservations, service_id is required
         if (!body.service_id) {
-          throw new NotFoundException("Service ID is required for non-self reservations");
+          throw new NotFoundException(
+            "Service ID is required for non-self reservations",
+          );
         }
         serviceIdToUse = body.service_id;
         // If it's not a self-reservation, handle customer creation
@@ -136,7 +135,10 @@ export class TimeSlotService {
         }
       }
 
-      const { start, end } = parseIntervalOrThrow(body.start_time, body.end_time);
+      const { start, end } = parseIntervalOrThrow(
+        body.start_time,
+        body.end_time,
+      );
       const serviceRow = await this.prisma.service.findUnique({
         where: { id: serviceIdToUse },
         select: { provider_id: true },
@@ -147,11 +149,11 @@ export class TimeSlotService {
       const clash = await this.findOverlappingTimeSlotForProvider(
         serviceRow.provider_id,
         start,
-        end
+        end,
       );
       if (clash) {
         throw new ConflictException(
-          "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit."
+          "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit.",
         );
       }
 
@@ -165,11 +167,11 @@ export class TimeSlotService {
           desc: body.desc || "",
         },
       });
-     
 
-      //  const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: `;
-       // await this.smsService.sendTwilioSms(body.phone, text);
-      
+      //payamchange
+      const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: `;
+      await this.smsService.sendTwilioSms(body.phone, text);
+
       return { slot };
     } catch (error) {
       throw error;
@@ -183,7 +185,7 @@ export class TimeSlotService {
     });
     if (!existing) {
       throw new NotFoundException(
-        "Dienst nicht gefunden oder bereits gelöscht."
+        "Dienst nicht gefunden oder bereits gelöscht.",
       );
     }
 
@@ -200,17 +202,17 @@ export class TimeSlotService {
 
     const { start, end } = parseIntervalOrThrow(
       dataRq.start_time,
-      dataRq.end_time
+      dataRq.end_time,
     );
     const clash = await this.findOverlappingTimeSlotForProvider(
       service.provider_id,
       start,
       end,
-      id
+      id,
     );
     if (clash) {
       throw new ConflictException(
-        "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit."
+        "Dieser Zeitraum überschneidet sich mit einem bestehenden Termin. Bitte wählen Sie eine andere Zeit.",
       );
     }
 
@@ -218,25 +220,18 @@ export class TimeSlotService {
     const res = await this.prisma.timeSlot.update({
       where: { id },
       data: {
-          start_time:dataRq.start_time,
-          end_time:dataRq.end_time,
-          service_id:dataRq.service_id,
-         
+        start_time: dataRq.start_time,
+        end_time: dataRq.end_time,
+        service_id: dataRq.service_id,
       },
-
+    });
+    if (res) {
+      // const text = `${dataRq.name &&("Hallo" +" "+ dataRq.name)}, Ihr Termin wurde erstellt: ${starttime}`;
+      // const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
+      return true;
     }
-  
-  );
-  if(res){
-    
- // const text = `${dataRq.name &&("Hallo" +" "+ dataRq.name)}, Ihr Termin wurde erstellt: ${starttime}`;
-// const smssent= await this.smsService.sendTwilioSms(dataRq.phone, text);
- return true  
-}  
-return false
-}
-
-
+    return false;
+  }
 
   async deleteTimeSlotsById(id: string, phone: string) {
     try {
@@ -250,23 +245,18 @@ return false
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundException(
-          "Dienst nicht gefunden oder bereits gelöscht."
+          "Dienst nicht gefunden oder bereits gelöscht.",
         );
       }
       throw error;
     }
   }
   async getUserTimeSlots(query: GetUserTimeSlotsDto) {
-    const { 
-      user_id, 
-      start_time, 
-      end_time, 
-     
-    } = query;
+    const { user_id, start_time, end_time } = query;
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     // Build where clause
     const where: Prisma.TimeSlotWhereInput = {
       customer_id: user_id,
@@ -296,7 +286,7 @@ return false
       skip,
       take: limit,
       orderBy: {
-        start_time: 'asc',
+        start_time: "asc",
       },
       include: {
         service: {
@@ -324,5 +314,4 @@ return false
       },
     };
   }
-
 }
