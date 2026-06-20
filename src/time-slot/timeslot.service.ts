@@ -168,8 +168,8 @@ export class TimeSlotService {
         },
       });
 
-            const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: `;
-          await this.smsService.sendTwilioSms(body.phone, text);
+           // const text = `Hallo ${body.name}, Ihr Termin wurde erstellt: `;
+          //await this.smsService.sendTwilioSms(body.phone, text);
 
       return { slot };
     } catch (error) {
