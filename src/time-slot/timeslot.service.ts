@@ -12,6 +12,10 @@ import { SmsService } from "../sms/sms.service";
 import { UpdateTimeSlotDto } from "./Dtos/updateTimeSlots.dto";
 import { convertToBerlinTime } from "utils/time.util";
 import { GetUserTimeSlotsDto } from "./Dtos/getUserTimeSlots.dto";
+import {
+  dayStartInAppTimezone,
+  getEarliestVisiblePastYmd,
+} from "src/common/past-appointment-visibility";
 
 /** Parses slot bounds; throws BadRequestException if invalid or start >= end. */
 function parseIntervalOrThrow(
@@ -261,6 +265,8 @@ export class TimeSlotService {
       customer_id: user_id,
     };
 
+    const now = new Date();
+
     // Add time filters if provided
     if (start_time) {
       where.start_time = {
@@ -272,6 +278,15 @@ export class TimeSlotService {
       where.end_time = {
         lte: new Date(end_time),
       };
+    }
+
+    // Default: all future appointments + past only within 15 days in current month
+    if (!start_time && !end_time) {
+      const earliestPast = dayStartInAppTimezone(getEarliestVisiblePastYmd());
+      where.OR = [
+        { start_time: { gte: now } },
+        { start_time: { gte: earliestPast, lt: now } },
+      ];
     }
 
     // Get total count for pagination
